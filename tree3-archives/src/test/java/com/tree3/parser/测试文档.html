@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>#code/Java/基础/集合     <a href="哈希表_散列表.md#^9bb4bc">哈希表</a>  <a href="https://www.bilibili.com/video/BV15b4y117RJ?p=39&amp;vd_source=daaf0a6f9f1cab8c6a63b7a6e7177ccc">视频</a>  [10. <a href="HashMap.md">HashMap</a>](java面试-基础篇.md#10.%20<a href="HashMap.md">HashMap</a>)</p>
+<h1>HashMap</h1>
+<h2>总结</h2>
+<ul>
+    <li></li>
+    <li>HashMap是==线程不安全==的;</li>
+</ul>
+<h2>底层数据结构</h2>
+<table>
+    <thead>
+    <tr><th align="center">版本</th><th align="center">JDK1.8</th><th>JDK1.7</th></tr>
+    </thead>
+    <tbody>
+    <tr><td align="center">结构</td><td align="center">数组+(链表|红黑树)</td><td>数组+链表</td></tr>
+    <tr><td align="center">说明</td><td align="center">红黑树是一种特殊情况、非正常情况、是万不得已情况下的保底策略</td><td> </td></tr>
+    </tbody>
+</table>
+<p><img src="https://tree3.oss-cn-hangzhou.aliyuncs.com/md/photo/1711783974-image-20240330153254350.png" alt="image-20240330153254350" /><a href="哈希表_散列表.md#拉链法[%20链地址法]">拉链法[ 链地址法]</a></p>
+<p>以下讨论未明确说明，均是按jdk1.8进行研究。</p>
+<h2>底层原理</h2>
+<ul>
+    <li>
+        <p>索引如何计算？</p>
+        <p>调用对象的hashCode()获得对象==原始的hashcode==,再调用HashMap的hash()方法对==原始的hashcode==进行二次哈希，最后通过==&amp;(capacity-1)==得到索引。</p>
+        <pre><code class="language-java">/**
+ * Computes key.hashCode() and spreads (XORs) higher bits of hash
+ * to lower.  Because the table uses power-of-two masking, sets of
+ * hashes that vary only in bits above the current mask will
+ * always collide. (Among known examples are sets of Float keys
+ * holding consecutive whole numbers in small tables.)  So we
+ * apply a transform that spreads the impact of higher bits
+ * downward. There is a tradeoff between speed, utility, and
+ * quality of bit-spreading. Because many common sets of hashes
+ * are already reasonably distributed (so don't benefit from
+ * spreading), and because we use trees to handle large sets of
+ * collisions in bins, we just XOR some shifted bits in the
+ * cheapest possible way to reduce systematic lossage, as well as
+ * to incorporate impact of the highest bits that would otherwise
+ * never be used in index calculations because of table bounds.
+ */
+static final int hash(Object key) {
+    int h;
+    return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);
+}
+</code></pre>
+    </li>
+</ul>
+<p>^661db8</p>
+<ul>
+    <li>
+        <p>已经有hashcode了，为什么还要提供hash()方法，进行二次hash()？</p>
+        <p>为了综合高位数据，让哈希分布更为均匀。即让元素分布更均匀。</p>
+    </li>
+</ul>
+<p>^bef6dc</p>
+<ul>
+    <li>
+        <p>数组容量为什么是2的n次幂？</p>
+        <p>计算索引时，如果是2的n次幂可以使用==位与运算代替取模，效率更高==；</p>
+        <pre><code class="language-java"> //扩容时
+ if ( 元素对应的hash&amp;oldCap==0) {
+     元素留在原来位置;
+ }else {
+     元素的新位置=旧位置+oldCap;
+ }
+</code></pre>
+        <p>上述 <a href="HashMap.md#^661db8">索引的计算</a>、<a href="HashMap.md#^bef6dc">二次hash()</a> 以及<a href="HashMap.md#^5ac411">使用位与运算优化</a> 都是==为了配合容量为2的n次幂时的优化手段==，例如Hashtable的容量就不是2的n次幂，并不能说哪种设计更优，应该是设计者综合了各种因素，最终选择了使用2的次幂作为容量。</p>
+    </li>
+</ul>
+<h2>为何要用红黑树，</h2>
+<ul>
+    <li>
+        <p>当链表中的元素个数超过一定的阈值后，红黑树的查找效率更高。防止链表超长时性能下降。</p>
+    </li>
+    <li>
+        <p>使用红黑树可以避免<a href="https://en.wikipedia.org/wiki/Denial-of-service_attack#:~:text=External%20links-,Denial%2Dof%2Dservice%20attack,-57%20languages">D0S攻击</a>，防止链表超长时性能下降。</p>
+    </li>
+    <li>
+        <p>==树化应当是偶然情况==。正常情况下、绝大多数情况下元素的分布是均匀的，很少会超过链表树化的阈值。</p>
+    </li>
+</ul>
+<h4>树化和退化</h4>
+<ol>
+    <li>
+        <p>为何不一上来就树化？</p>
+        <ul>
+            <li>
+                <p>树化是特殊情况、偶然情况、是万不得已情况下的保底策略</p>
+            </li>
+            <li>
+                <p>在链表长度达到树化阈值之前，链表的性能是优于或等价于红黑树的</p>
+                <blockquote>
+                    <p>hash表的查找，更新的时间复杂度是O(1);红黑树的查找，更新的时间复杂度是O(Iog~2~n)。</p>
+                </blockquote>
+            </li>
+            <li>
+                <p>树化会带来额外的开销</p>
+                <blockquote>
+                    <p>建树的过程；</p>
+                    <p>TreeNode占用空间也比普通Node的大，如非必要，尽量还是使用链表。</p>
+                </blockquote>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <p>树化阈值为何是8？</p>
+        <p>为了尽可能的让树化几率足够小。</p>
+        <blockquote>
+            <p>hash值如果足够随机，则在hash表内按泊松分布，在负载因子0.75的情况下，长度超过8的链表出现概率是0.00000006，选择8就是为了让树化几率足够小。</p>
+        </blockquote>
+        <p><img src="https://tree3.oss-cn-hangzhou.aliyuncs.com/md/photo/1711784001-image-20240330153321286.png" alt="image-20240330153321286" /></p>
+        <p><img src="https://tree3.oss-cn-hangzhou.aliyuncs.com/md/photo/1711784007-image-20240330153327606.png" alt="image-20240330153327606" /></p>
+    </li>
+    <li>
+        <p>何时会树化，树化的条件是什么？</p>
+        <ol>
+            <li>
+                <p>链表长度超过树化阈值[^树化阈值为8]；</p>
+            </li>
+            <li>
+                <p>数组==容量大于等于64==；</p>
+                <p>即 ( (链表长度超过树化阈值[^树化阈值为8])&amp;&amp;(数组==容量大于等于64==))。</p>
+            </li>
+        </ol>
+        <blockquote>
+            <p>当链表长度超过树化阈值时，并不是直接进行==树化==,而是先检查数组的长度是否超过64——即优先通过扩容来解决 元素堆积 现象，树化只是万不得已的选择；</p>
+        </blockquote>
+    </li>
+    <li>
+        <p>何时会退化为链表？</p>
+        <ol>
+            <li>情况1：==扩容时如果进行树的拆分==时，==树元素个数&lt;=6==；</li>
+            <li>情况2：==remove()树节点时==，若root、root.left、root.right.、root.left.left有一个为null。</li>
+        </ol>
+    </li>
+</ol>
+<h2>put()方法流程介绍，1.7和1.8的不同</h2>
+<ol>
+    <li>
+        <p>HashMap是==懒惰创建数组==的，首次使用时才创建数组；</p>
+    </li>
+    <li>
+        <p>计算索引（桶下标）；</p>
+    </li>
+    <li>
+<pre><code class="language-java">if (桶下标未被占用){
+    创建Node占位返回
+}else {
+    if (是TreeNode){
+        红黑树的添加或更新逻辑
+    }else {
+        if (链表长度超过树化阈值) {
+            树化逻辑
+        }else {//是普通Node，走链表的添加或更新逻辑
+            是普通Node，走链表的添加或更新逻辑
+        }
+    }
+}f
+</code></pre>
+    </li>
+    <li>
+        <p>==返回前检查容量是否超过阈值==，一旦查过则进行扩容。</p>
+    </li>
+</ol>
+<p><strong>1.7和1.8的不同?</strong></p>
+<table>
+    <thead>
+    <tr><th> </th><th>1.7</th><th>1.8</th></tr>
+    </thead>
+    <tbody>
+    <tr><td>链表插入节点时</td><td>头插法</td><td>尾插法</td></tr>
+    <tr><td>扩容阈值处理</td><td>(==`链表长度&gt;=阈值`  and `没有空位`==)进行扩容</td><td>`==链表长度&gt;阈值==`直接进行扩容</td></tr>
+    <tr><td>其它</td><td> </td><td>在扩容计算Node索引时，会进行优化</td></tr>
+    </tbody>
+</table>
+<ol>
+    <li>链表插入时，1.8</li>
+</ol>
+<h4>加载因子为何默认是0.75f</h4>
+<p>为了在==空间占用==和==查询时间==之间取得较好的权衡。</p>
+<blockquote>
+    <p>大于这个值，空间节省了，但链表就会比较长影响性能
+        小于这个值，冲突减少了，但扩容就会更频繁，空间占用多</p>
+</blockquote>
+<h2>使用时的注意事项</h2>
+<ol>
+    <li>
+        <p>多线程下存在的问题？</p>
+        <ul>
+            <li>
+                <p>JDK1.7中存在扩容死链问题。</p>
+            </li>
+            <li>
+                <p>JDK1.7和JDK1.8中存在数据错乱问题。</p>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <p>key能否为null,作为key的对象有什么要求？</p>
+        <p>HashMap的key可以为nul,但Map的其他实现类则不然</p>
+        <p>要求：作为key的对象，==必须实现hashCode和equals，并且key的内容不能修改（不可变）==。</p>
+        <p>^4ff4da</p>
+    </li>
+    <li>
+        <p><img src="String类.md#String对象的hashCode()如何设计的，为什么每次乘的是31。" alt="String对象的hashCode(H:\OneDrive\tree-life\Box\String类.md)如何设计的，为什么每次乘的是31。" /></p>
+    </li>
+</ol>
+</body>
+</html>

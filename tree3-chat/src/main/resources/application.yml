@@ -1,0 +1,20 @@
+server:
+  port: 9202
+
+spring:
+  application:
+#    聊天服务
+    name: Tree3-Chat
+  cloud:
+    nacos:
+      server-addr: 192.168.154.101:8848
+
+
+
+
+logging:
+  level:
+    com.tree3.dao: debug
+    com.tree3.controller: trace
+app:
+  showCase: true

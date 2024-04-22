@@ -1,0 +1,67 @@
+server:
+  port: 9200
+
+spring:
+  application:
+    name: Tree3-Gateway
+  cloud:
+    nacos:
+      server-addr: 192.168.154.101:8848
+
+
+    #网关配置
+    gateway:
+      routes:
+        # 文件处理服务
+        - id: archives_router
+          uri: lb://Tree3-Archives
+          predicates:
+            #            - Path=/网关前缀/真正路径
+            - Path=/archives/**
+          filters:
+            - StripPrefix=1
+
+        # 聊天服务服务
+        - id: chat_router
+          uri: lb://Tree3-Chat
+          predicates:
+            - Path=/chat/**
+          filters:
+            - StripPrefix=1
+
+        #搜索服务
+        - id: search_router
+          uri: lb://Tree3-search
+          predicates:
+            - Path=/search/** #以网关地址接收到的路径    from
+          filters:
+            - StripPrefix=1  #去掉请求前缀filter int数字  1:去掉一级 2:去掉两级
+        #用户服务
+        - id: users_router
+          uri: lb://Tree3-Users #转发至              to ；以负载均衡的方式，将请求转发至对应的服务集群进行处理
+          predicates:
+            #-将用户认证的 管理 剥离成单独的路径 -->/app/**
+            - Path=/token/**,/tokens/**,/users/** ,/app/**,/followings/** #以网关地址接收到的路径    from
+          filters:
+            - StripPrefix=1  #去掉请求前缀filter int数字  1:去掉一级 2:去掉两级
+            - Logger=true,测试
+
+
+      # 网关全局跨域配置
+      globalcors:
+        cors-configurations:
+          '[/**]': # '/**'表示对所有路由生效，可以根据需要调整为特定路径
+            allowedOrigins: "*" # 允许所有的源地址，也可以指定具体的域名
+            allowedMethods: "*" #允许所有请求方式访问 HTTP 方法类型
+            allowedHeaders: "*" # 允许所有的请求头，也可以指定具体的请求头
+            allowCredentials: true # 当前端请求携带凭证（cookies/token）时，需开启本选项
+#            add-to-simple-url-handler-mapping: true # 解决options请求被拦截的问题
+            #maxAge: 3600 # CORS预检请求的有效期（秒）
+
+
+logging:
+  level:
+    com.tree3.dao: debug
+    com.tree3.controller: debug
+    com.tree3.filter: debug
+

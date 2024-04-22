@@ -1,0 +1,14 @@
+server:
+  port: 9199
+spring:
+  application:
+    name: Tree3-common
+  cloud:
+    nacos:
+      server-addr: 192.168.154.101:8848
+
+
+logging:
+  level:
+    com.tree3.dao: debug
+    com.tree3.controller: trace

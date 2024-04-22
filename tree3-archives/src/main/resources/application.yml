@@ -1,0 +1,36 @@
+server:
+  port: 9201
+
+spring:
+  application:
+#    文件处理服务
+    name: Tree3-Archives
+  cloud:
+    nacos:
+      server-addr: 192.168.154.101:8848
+
+
+#设置openfeign调用超时
+feign:
+  client:
+    config:
+      default:
+        # 超时设置 1.5 秒超时 1500
+        #        connectTimeout: 1500
+        #        readTimeout: 1500
+        connectTimeout: 100000
+        readTimeout: 100000
+        # 日志级别
+        loggerLevel: full
+#        # 断路器
+#  circuitbreaker:
+#    enabled: true
+
+
+
+logging:
+  level:
+    com.tree3.dao: debug
+    com.tree3.controller: trace
+app:
+  showCase: true

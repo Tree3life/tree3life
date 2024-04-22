@@ -1,0 +1,28 @@
+            <>
+                仪表盘首页
+                <CrudPage
+                    apiSave={role.saveSysRole}
+                    apiUpdate={role.updateSysRole}
+                    apiDelete={role.deleteSysRole}
+                    apiQuery={role.getSysRoleList}
+                >
+                    <React.Fragment key={'query'}>
+                        条件查询
+                    </React.Fragment>
+                    <React.Fragment key={'saveForm'}>
+                        保存表单
+                    </React.Fragment>
+                    <React.Fragment key={'infoTable'}>
+                        {
+                            (
+                                () => {
+                                    let columns =  []
+                                    columns.push({title: '角色名称', dataIndex: 'role', editable: true,});
+                                    columns.push({title: '角色描述', dataIndex: 'description', editable: true,});
+                                    return columns
+                                }
+                            )()
+                        }
+                    </React.Fragment>
+                </CrudPage>
+            </>

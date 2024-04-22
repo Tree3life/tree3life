@@ -1,0 +1,16 @@
+#server:
+#  port: 9080
+#
+#spring:
+#  application:
+#    name: Tree3-Webcore
+#  cloud:
+#    nacos:
+#      server-addr: 192.168.154.101:8848
+logging:
+  level:
+    com.tree3.dao: debug
+    com.tree3.exception: trace
+
+app:
+  showCase: true

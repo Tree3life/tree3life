@@ -1,0 +1,17 @@
+server:
+  port: 9203
+
+spring:
+  application:
+    name: Tree3-search
+  cloud:
+    nacos:
+      server-addr: 192.168.154.101:8848
+
+
+logging:
+  level:
+    com.tree3.dao: debug
+    com.tree3.controller: trace
+app:
+  showCase: true
