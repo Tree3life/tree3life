@@ -54,3 +54,7 @@ yarn-error.log*
 
 #endregion  过滤前端文件
 
+/tree3-life/.idea/tree3-life.iml
+/tree3-life/.idea/.gitignore
+/tree3-life/.idea/vcs.xml
+/tree3-life/.idea/watcherTasks.xml
