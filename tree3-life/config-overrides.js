@@ -18,6 +18,7 @@ module.exports = override(
     // }),
     //添加装饰器语法
     addDecoratorsLegacy(),
+    //解析 `@`==> src
     addWebpackAlias({
         ['@']: resolve('src')
     })

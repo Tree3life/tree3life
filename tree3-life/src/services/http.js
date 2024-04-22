@@ -2,7 +2,7 @@
 import axios from 'axios'
 import {message} from "antd";
 import settings from '@/resources/application'
-// import history from "@/util/history";
+import history from "@/util/history";
 
 
 //region axios初始化
@@ -11,11 +11,6 @@ const service = axios.create({
     // baseURL: process.env.NODE_ENV === 'production' ? process.env.VUE_APP_BASE_API : '/', // api 的 base_url
     headers: {
         "Content-Type": "application/json",
-        // "Access-Control-Allow-Origin": "*",
-        // "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,PATCH,OPTIONS",
-        // "Access-Control-Allow-Credentials": "true",
-        // "Access-Control-Max-Age":"1800",
-        // "Access-Control-Allow-Headers":"content-type",
     },
     baseURL: settings.base_url, // api 的 base_url
     timeout: settings.timeout, // 请求超时时间
@@ -31,10 +26,7 @@ const service = axios.create({
 service.interceptors.request.use(config => {
     // config.data = JSON.stringify(config.data);
     //在请求头headers中添加token
-    // config.headers["Authorization"] = localStorage.getItem(settings.token_key)
-
     config.headers["Authorization"] = "rupert"
-    // console.log("configconfig拦截器", config);
 
     return config;
 }, error => {
@@ -57,31 +49,29 @@ service.interceptors.response.use(resp => {
      *   此处相当于统一异常处理，当发生异常时，此处简单的对异常信息进行格式化；
      *   在请求方法处将异常展示
      */
-    // switch (resp.data.code) {
-    //     case 2000://成功
-    //         return resp.data;
-    //     case 2001://未登录
-    //         console.log("响应码：" + resp.data.code + " >>>>>>>>>>>>>>>>>>：", resp);
-    //         history.push('/');
-    //         return Promise.reject(resp.data.message);
-    //     case 2002://账号不存在
-    //         console.log("响应码：" + resp.data.code + " >>>>>>>>>>>>>>>>>>：", resp);
-    //         // history.push('/');
-    //         return Promise.reject(resp.data.message);
-    //     case 2006://权限不足
-    //         console.log("响应码：" + resp.data.code + " >>>>>>>>>>>>>>>>>>：", resp);
-    //         return Promise.reject(resp.data.message + "：" + resp.config.url);
-    //     default://`凡是不返回2000的都是错误的数据，应当在此处进行处理；也就是说非法的返回值，应当止步于此；`
-    //         console.log("响应码：" + resp.data.code + "未知的响应异常>>>>>>>>>>>>>>>>>>：", resp);
-    //         return Promise.reject(new Error(resp.data.message));
-    // }
+    switch (resp.data.code) {
+        case 2000://成功
+            return resp.data;
+        case 2001://未登录
+            console.log("响应码：" + resp.data.code + " >>>>>>>>>>>>>>>>>>：", resp);
+            history.push('/');
+            return Promise.reject(resp.data.message);
+        case 2002://账号不存在
+            console.log("响应码：" + resp.data.code + " >>>>>>>>>>>>>>>>>>：", resp);
+            // history.push('/');
+            return Promise.reject(resp.data.message);
+        case 2006://权限不足
+            console.log("响应码：" + resp.data.code + " >>>>>>>>>>>>>>>>>>：", resp);
+            return Promise.reject(resp.data.message + "：" + resp.config.url);
+        default://`凡是不返回2000的都是错误的数据，应当在此处进行处理；也就是说非法的返回值，应当止步于此；`
+            console.log("响应码：" + resp.data.code + "未知的响应异常>>>>>>>>>>>>>>>>>>：", resp);
+            return Promise.reject(new Error(resp.data.message));
+    }
 }, errobj => {//当响应码 !=200 时进入失败的回调
     /* 1.请求失败结果处理 */
     /* 2.优化分支结构的处理 */
-    // console.log('检查http.js中的axios响应拦截器失败时的处理逻辑', error);
-    //error.response.data：包含了错误信息
+    console.log('检查http.js中的axios响应拦截器失败时的处理逻辑', error);
     //3.决策处理响应失败的逻辑
-    // error.response.data={timestamp: '2022-07-22T02:05:01.647+0000', status: 404, error: 'Not Found', message: 'No message available', path: '/tUserFriends/get3/2'}
     if (errobj.response === undefined) {
         message.error("进入了拦截器失败回调", 5)
         return Promise.reject(() => {
@@ -94,9 +84,6 @@ service.interceptors.response.use(resp => {
         status,
         // timestamp
     } = respErr
-    // if (status === 204) {
-    //     errobj.message = status + '无需读取数据！'
-    // }
 
     // 根据请求状态 处理
     if (status === 401) {
