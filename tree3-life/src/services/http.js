@@ -41,16 +41,14 @@ service.interceptors.response.use(resp => {
     /* 1.根据实际项目设计进行数据解析*/
     /*todo 2.解密请求报文*/
 
-    /* 此处处理自定义业务码：响应结果 符合预期数据 */
-    //拆包
-    return resp.data;
-
     /**
+     *   此处处理自定义业务码：响应结果 符合预期数据
      *   此处相当于统一异常处理，当发生异常时，此处简单的对异常信息进行格式化；
      *   在请求方法处将异常展示
      */
-    switch (resp.data.code) {
+    switch (resp.data.bizCode) {
         case 2000://成功
+            //拆包
             return resp.data;
         case 2001://未登录
             console.log("响应码：" + resp.data.code + " >>>>>>>>>>>>>>>>>>：", resp);
@@ -70,7 +68,7 @@ service.interceptors.response.use(resp => {
 }, errobj => {//当响应码 !=200 时进入失败的回调
     /* 1.请求失败结果处理 */
     /* 2.优化分支结构的处理 */
-    console.log('检查http.js中的axios响应拦截器失败时的处理逻辑', error);
+    // console.log('检查http.js中的axios响应拦截器失败时的处理逻辑', error);
     //3.决策处理响应失败的逻辑
     if (errobj.response === undefined) {
         message.error("进入了拦截器失败回调", 5)
