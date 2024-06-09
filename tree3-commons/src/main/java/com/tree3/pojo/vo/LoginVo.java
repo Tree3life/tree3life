@@ -22,4 +22,10 @@ public class LoginVo implements Serializable {
     private static final long serialVersionUID = 192832542147404064L;
     private String username;
     private String password;
+
+    /**
+     * 用于解决 同一个用户每登录一次就产生一个token的问题，
+     * 前端在登录时尝试传递 存储在前端的token，如果本地存在token，将其传到后端，通知后端 删除该token
+     */
+//    private String token;
 }
