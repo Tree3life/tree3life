@@ -9,12 +9,14 @@ body #root {
   width: 100%;
   height: 100%;
   position: absolute;
+  padding: 0;
 }
 html #root .App,
 body #root .App {
   position: absolute;
   width: 100%;
   height: 100%;
-  padding: 2.5% 10%;
+  background-color: #fafffe;
+  padding: 0;
 }
 /*# sourceMappingURL=App.css.map */

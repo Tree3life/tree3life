@@ -1,7 +1,8 @@
 import {get, post, put, del, patch, proGet} from './http.js'
 import * as sysRole from './sysRole'
 import * as websocket from './websocket'
-import * as application from "./application";
+import * as auth from "./auth";
+import * as user from "./user";
 
 /**
  * 此文件用于注册后端请求
@@ -34,7 +35,8 @@ import * as application from "./application";
 export {
     get, post, put, del, patch, proGet,//基础的http请求
     websocket,
-    application,
+    user,
+    auth,
     sysRole,
 }
 

@@ -1,18 +1,31 @@
 /**
- * 本文件是reducer和action的结合
+ * 本文件是reducer和action creator的结合
  */
-import ACTION from '../type'
+import ACTION from '../actiontypes'
+import {clientId} from "@/components/Tree3ChatRoom/tree3chatWebsocket";
 
 /**
  * reducer：person
- * @type {[{name: string, id: string, age: number}]}
+ * @type {[{token,name: string, id: string, age: number}]}
  */
-const initState = {}
+const initState = {
+    token: "",
+    id: clientId,
+    name: '姓名',
+    username: '',
+    avatar: '',
+    age: '',
+    createTime: '',
+    deleted: false,
+    gender: '性别',
+    locked: true,
+}
 
+//reducer，reducer本质是一个纯函数
 export function user(preState = initState, action) {
     const {type, data} = action
     switch (type) {
-        case ACTION.tempStorageUserInfo: //暂存登录成功的用户信息
+        case ACTION.storageUserInfo: //暂存登录成功的用户信息
             //preState.unshift(data) //此处不可以这样写，这样会导致preState被改写，personReducer就不是纯函数了。
             return {...preState, ...data}
         default:
@@ -20,14 +33,18 @@ export function user(preState = initState, action) {
     }
 }
 
-
+//region action creators
 /**
- * 以下是 所有和 reducer：person 相关的action
+ * 以下是 所有和 reducer：person 相关的 action
  * 即用于改变状态的方法
  * @param data
  * @returns {{data, type: string}}
  */
+export const storageUserInfo = data => {
+    // debug@Rupert：对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/5/28 19:45)
+    console.log("storageUserInfostorageUserInfo：",data)
+    return {type: ACTION.storageUserInfo, data}
+}
 
-export const tempStorageUserInfo = data => ({type: ACTION.tempStorageUserInfo, data})
 
-
+//endregion action creators

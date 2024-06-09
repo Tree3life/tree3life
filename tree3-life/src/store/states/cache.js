@@ -16,11 +16,28 @@
  * @param data
  * @returns {{}|*}
  */
-import ACTION from "../type";
+import ACTION from "../actiontypes";
 
 //todo 异步redux远程初始化加载$formOptions的roleOptions
-const initState = {"娃哈哈": "只能读,不能写","$formOptions":{"roles":[{id:'123',role:'上官'}]}}
+const initState = {
+    "tree3life_cache": "只能读,不能写",
+    "$formOptions": {"roles": [{id: '123', role: '上官'}]},
+    token: '',
+    userInfo: {
+        id: -999,
+        name: '姓名',
+        username: '',
+        avatar: '',
+        age: '',
+        createTime: '',
+        deleted: false,
+        gender: '性别',
+        locked: true,
+    },
+    websocket: undefined,
+}
 
+// const {cache: {userInfo: {id: userId}, token}} = this.props;
 /**
  * cache 本项目内部的缓存区
  * @param preState
@@ -34,6 +51,7 @@ export function cache(preState = initState, action) {
      */
     if (type === ACTION.saveInLocalCache) {
         // 获取data中的所有对象，并存入到catch中
+        // preState.unshift(data) //此处不可以这样写，这样会导致preState被改写，personReducer就不是纯函数了。
         return {...preState, ...data}
     } else {
         return preState

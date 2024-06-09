@@ -15,6 +15,7 @@ import {persistStore, persistReducer} from 'redux-persist';
 // import storage from 'redux-persist/lib/storage';
 import sessionStorage from 'redux-persist/lib/storage/session'
 // import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
+import {app_name} from "@/resources/application";
 
 //汇总所有的reducer（实质上是states）为一个总的reducer
 const reducer = combineReducers(states);
@@ -22,7 +23,7 @@ const reducer = combineReducers(states);
 //region redux持久化配置
 //定义配置的信息
 const persisConfig = {
-    key: "root",
+    key: app_name,
     storage: sessionStorage,//存储引擎
     // 黑名单: 设置不参与持久化的state的键值
     blacklist: ['不想缓存的信息的key'],// navigation will not be persisted
@@ -54,6 +55,15 @@ export default store
   blacklist: ['auth'],
   stateReconciler: autoMergeLevel2
 };
+
+ const persistConfig = {
+  key: 'root', // 标识存储在本地存储中的数据
+  storage, // 持久化存储引擎，默认是localStorage
+  whitelist: ['auth'], // 白名单，只持久化指定reducer的状态
+  blacklist: ['counter'], // 黑名单，不持久化指定reducer的状态
+  transforms: [myTransform], // 转换器，可以自定义转换函数来改变持久化存储的数据格式
+};
+
 
  const authPersistConfig = {
   key: 'auth',
