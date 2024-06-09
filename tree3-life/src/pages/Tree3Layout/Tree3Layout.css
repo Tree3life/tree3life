@@ -1,0 +1,15 @@
+#container {
+  height: 100%;
+}
+#container .ant-modal-footer button:nth-child(1) {
+  display: none;
+}
+#container-sider-left,
+#container-sider-right {
+  background-color: #D1DEE9;
+  width: 100%;
+}
+#container-head {
+  background-color: #fafffe;
+}
+/*# sourceMappingURL=Tree3Layout.css.map */

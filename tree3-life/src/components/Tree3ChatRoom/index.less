@@ -1,0 +1,242 @@
+@import "../../index";
+
+@defaultHeight: 100%;
+@bodyWidth: 75.7744%;
+@infoWidth: 24.2256%;
+.common {
+  height: @defaultHeight;
+}
+
+//设置每条聊天记录的样式
+.tree3-common-ant-comment-inner {
+  padding: 0 3% 0 5%;
+}
+
+//设置每条聊天记录的样式
+.tree3-common-record-span {
+  margin-bottom: 0em;
+}
+
+#tree3ChatRoom {
+  position: relative;
+  display: flex;
+  flex-flow: row nowrap;
+  background-color: red;
+  height: @defaultHeight;
+  .common();
+  //justify-content: stretch;
+  //align-items: stretch;
+
+  #funcArea {
+    flex-basis: 26.2256%; //39.2%*61.8%
+    background-color: #66B134;
+    //justify-content: stretch;
+    //align-items: stretch;
+    //width: 100%;
+
+    .ant-tabs .ant-tabs-left-bar {
+      width: 30%;
+    }
+
+    .ant-tabs .ant-tabs-left-content {
+      padding-left: 0px;
+
+      .ant-list-item {
+        padding-right: 5px;
+      }
+
+      .ant-list-item-meta-title {
+
+      }
+
+      .ant-list-item-meta-avatar {
+        align-self: center;
+        padding-left: 5px;
+      }
+    }
+  }
+
+  #welcomeImg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  #mainArea {
+    flex-basis: 73.7744%;
+    display: flex;
+    //display: none;
+    flex-flow: row nowrap;
+    background-color: #e8e8e8;;
+    position: relative;
+
+    #mainHeader {
+      position: absolute;
+      width: 100%;
+      height: 10%;
+      opacity: 0.5;
+      z-index: 2;
+      display: flex;
+      flex-flow: row nowrap;
+      //justify-content: center;
+      span:nth-child(1) {
+        background-color: #81D627;
+        display: flex;
+        align-self: center;
+        justify-content: center;
+        flex: @bodyWidth;
+        height: 100%;
+        padding: 1%;
+      }
+
+      span:nth-child(2) {
+        background-color: #6e8059;
+        display: flex;
+        height: 100%;
+        padding: 3%;
+        flex: @infoWidth;
+        align-self: center;
+      }
+    }
+
+    #bodyWindow {
+      display: flex;
+      background-color: #f9f3f3;
+      flex-flow: column nowrap;
+      flex-basis: @bodyWidth;
+      padding-top: 3%;
+      align-items: stretch;
+      //width: 100%;
+      position: relative;
+
+      #historyWindow {
+        //display: 'flex',
+        //flexDirection: 'column-reverse',
+        flex: 72.67;
+        flex-flow: column nowrap;
+        //background-color: #debaba;
+        //padding-bottom: 3%;
+        //margin-bottom: 5%;
+
+        //#scrollableDivHistory{
+        //flex-basis: @infoWidth;
+        width: 100%;
+        overflow: auto;
+        //height: 400px;
+        // height: 400,
+        //overflow: 'auto',
+        //// border: '1px solid rgba(140, 140, 140, 0.35)',
+        //padding:'10%  5%  20%',
+        //height: '72.67%',
+        .infinite-scroll-component{
+          .loadingSpan{
+            padding-top: 5%;
+            margin: auto;
+          }
+        }
+        .ant-spin-container {
+          padding-bottom: 2.5%;
+        }
+        .ant-list-item {
+          padding: 1%;
+          //justify-content: stretch;
+          //width: 100%;
+          border-bottom: 0.05px solid #e8e8e8;
+
+
+          .userListItem {
+            width: 100%;
+
+            .ant-comment-inner {
+              .tree3-common-ant-comment-inner();
+
+              .ant-comment-content-author {
+                justify-content: flex-end;
+
+                .ant-comment-content-author-name {
+                  order: 9;
+                }
+
+                .ant-comment-content-author-time {
+                  order: 8;
+                }
+              }
+            }
+
+            p {
+              text-align: right;
+              .tree3-common-record-span();
+            }
+
+            .ant-comment-avatar {
+              order: 9;
+              margin-right: -1%; //调整右侧头像 举例 滚动条的距离
+            }
+          }
+
+          .contactorObjListItem {
+            width: 100%;
+            .ant-comment-inner {
+              .tree3-common-ant-comment-inner();
+              width: 100%;
+              justify-content: stretch;
+              align-self: stretch;
+
+              p {
+                .tree3-common-record-span();
+              }
+            }
+          }
+
+        }
+      }
+
+      #funcWindow {
+        position: absolute;
+        top: 68.18%;
+        height: 6%;
+        background-color: #b1dae7;
+        width: 100%;
+        opacity: 0.5;
+        z-index: 2;
+      }
+
+      #inputWindow {
+        flex: 27.321;
+        padding: 2% 1% 1%;
+        //background-color: #2bafd8;
+        //margin-top: 12%;
+      }
+    }
+
+
+    #infoWindow {
+      //padding-top: 7%;
+      flex-basis: @infoWidth;
+      height: 100%;
+      position: relative;
+
+
+      .friendInfo {
+        //style={{position: 'absolute', height: '100%',paddingTop:'7%'}}
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        padding-top: 30%;
+
+        .infoPicture {
+          object-fit: cover;
+          //height: auto;
+          flex: 1;
+        }
+
+        .ant-card-body {
+          //position: absolute;
+          padding: 24px;
+          height: auto;
+        }
+      }
+    }
+  }
+}
+

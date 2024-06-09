@@ -1,0 +1,165 @@
+.common {
+  height: 100%;
+}
+.tree3-common-ant-comment-inner {
+  padding: 0 3% 0 5%;
+}
+.tree3-common-record-span {
+  margin-bottom: 0em;
+}
+#tree3ChatRoom {
+  position: relative;
+  display: flex;
+  flex-flow: row nowrap;
+  background-color: red;
+  height: 100%;
+}
+#tree3ChatRoom #funcArea {
+  flex-basis: 26.2256%;
+  background-color: #66B134;
+}
+#tree3ChatRoom #funcArea .ant-tabs .ant-tabs-left-bar {
+  width: 30%;
+}
+#tree3ChatRoom #funcArea .ant-tabs .ant-tabs-left-content {
+  padding-left: 0px;
+}
+#tree3ChatRoom #funcArea .ant-tabs .ant-tabs-left-content .ant-list-item {
+  padding-right: 5px;
+}
+#tree3ChatRoom #funcArea .ant-tabs .ant-tabs-left-content .ant-list-item-meta-avatar {
+  align-self: center;
+  padding-left: 5px;
+}
+#tree3ChatRoom #welcomeImg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+#tree3ChatRoom #mainArea {
+  flex-basis: 73.7744%;
+  display: flex;
+  flex-flow: row nowrap;
+  background-color: #e8e8e8;
+  position: relative;
+}
+#tree3ChatRoom #mainArea #mainHeader {
+  position: absolute;
+  width: 100%;
+  height: 10%;
+  opacity: 0.5;
+  z-index: 2;
+  display: flex;
+  flex-flow: row nowrap;
+}
+#tree3ChatRoom #mainArea #mainHeader span:nth-child(1) {
+  background-color: #81D627;
+  display: flex;
+  align-self: center;
+  justify-content: center;
+  flex: 75.7744%;
+  height: 100%;
+  padding: 1%;
+}
+#tree3ChatRoom #mainArea #mainHeader span:nth-child(2) {
+  background-color: #6e8059;
+  display: flex;
+  height: 100%;
+  padding: 3%;
+  flex: 24.2256%;
+  align-self: center;
+}
+#tree3ChatRoom #mainArea #bodyWindow {
+  display: flex;
+  background-color: #f9f3f3;
+  flex-flow: column nowrap;
+  flex-basis: 75.7744%;
+  padding-top: 3%;
+  align-items: stretch;
+  position: relative;
+}
+#tree3ChatRoom #mainArea #bodyWindow #historyWindow {
+  flex: 72.67;
+  flex-flow: column nowrap;
+  width: 100%;
+  overflow: auto;
+}
+#tree3ChatRoom #mainArea #bodyWindow #historyWindow .infinite-scroll-component .loadingSpan {
+  padding-top: 5%;
+  margin: auto;
+}
+#tree3ChatRoom #mainArea #bodyWindow #historyWindow .ant-spin-container {
+  padding-bottom: 2.5%;
+}
+#tree3ChatRoom #mainArea #bodyWindow #historyWindow .ant-list-item {
+  padding: 1%;
+  border-bottom: 0.05px solid #e8e8e8;
+}
+#tree3ChatRoom #mainArea #bodyWindow #historyWindow .ant-list-item .userListItem {
+  width: 100%;
+}
+#tree3ChatRoom #mainArea #bodyWindow #historyWindow .ant-list-item .userListItem .ant-comment-inner {
+  padding: 0 3% 0 5%;
+}
+#tree3ChatRoom #mainArea #bodyWindow #historyWindow .ant-list-item .userListItem .ant-comment-inner .ant-comment-content-author {
+  justify-content: flex-end;
+}
+#tree3ChatRoom #mainArea #bodyWindow #historyWindow .ant-list-item .userListItem .ant-comment-inner .ant-comment-content-author .ant-comment-content-author-name {
+  order: 9;
+}
+#tree3ChatRoom #mainArea #bodyWindow #historyWindow .ant-list-item .userListItem .ant-comment-inner .ant-comment-content-author .ant-comment-content-author-time {
+  order: 8;
+}
+#tree3ChatRoom #mainArea #bodyWindow #historyWindow .ant-list-item .userListItem p {
+  text-align: right;
+  margin-bottom: 0em;
+}
+#tree3ChatRoom #mainArea #bodyWindow #historyWindow .ant-list-item .userListItem .ant-comment-avatar {
+  order: 9;
+  margin-right: -1%;
+}
+#tree3ChatRoom #mainArea #bodyWindow #historyWindow .ant-list-item .contactorObjListItem {
+  width: 100%;
+}
+#tree3ChatRoom #mainArea #bodyWindow #historyWindow .ant-list-item .contactorObjListItem .ant-comment-inner {
+  padding: 0 3% 0 5%;
+  width: 100%;
+  justify-content: stretch;
+  align-self: stretch;
+}
+#tree3ChatRoom #mainArea #bodyWindow #historyWindow .ant-list-item .contactorObjListItem .ant-comment-inner p {
+  margin-bottom: 0em;
+}
+#tree3ChatRoom #mainArea #bodyWindow #funcWindow {
+  position: absolute;
+  top: 68.18%;
+  height: 6%;
+  background-color: #b1dae7;
+  width: 100%;
+  opacity: 0.5;
+  z-index: 2;
+}
+#tree3ChatRoom #mainArea #bodyWindow #inputWindow {
+  flex: 27.321;
+  padding: 2% 1% 1%;
+}
+#tree3ChatRoom #mainArea #infoWindow {
+  flex-basis: 24.2256%;
+  height: 100%;
+  position: relative;
+}
+#tree3ChatRoom #mainArea #infoWindow .friendInfo {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  padding-top: 30%;
+}
+#tree3ChatRoom #mainArea #infoWindow .friendInfo .infoPicture {
+  object-fit: cover;
+  flex: 1;
+}
+#tree3ChatRoom #mainArea #infoWindow .friendInfo .ant-card-body {
+  padding: 24px;
+  height: auto;
+}
+/*# sourceMappingURL=index.css.map */

@@ -3,20 +3,22 @@ import {connect} from 'react-redux'
 import {message} from "antd";
 
 import './Login.css'
-import qqSrc from "@/resources/static/asset/QQ.png"
-import wcSrc from "@/resources/static/asset/WeChat.png"
+// import qqSrc from "@/resources/static/asset/QQ.png"
+// import wcSrc from "@/resources/static/asset/WeChat.png"
 
-import {application} from "@/services";
-import {tempStorageUserInfo} from "@/store/states/user";
+import {auth} from "@/services";
 import {saveInLocalCache} from "@/store/states/cache";
+import {debounce} from "@/util/throttleAndDebounce";
+import settings from "@/resources/application";
+import {storageUserInfo} from "@/store/states/user";
 
 
 @connect(state => ({
     user: state.user,
     cache: state.cache
 }), {
-    tempStorageUserInfo,
-    saveInLocalCache
+    saveInLocalCache,
+    storageUserInfo
 })
 class Login extends Component {
     state = {
@@ -24,41 +26,46 @@ class Login extends Component {
         password: ""
     }
 
-    collectData = async () => {
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-        //todo check 用户名密码的合法性
-        if (!username || !password) {
-            message.warn("用户名/密码不能为空")
-        }
+    collectData = () => {
+        debounce(async () => {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            //todo check 用户名密码的合法性
+            if (!username || !password) {
+                message.warn("用户名/密码不能为空")
+                return;
+            }
 
-        if (password.length < 6) {
-            message.warn("密码错误")
-        }
+            if (password.length < 6) {
+                message.warn("密码错误")
+                return;
+            }
 
-        let info = {username, password};
+            let info = {username, password};
+            let resp = await auth.login(info);
+            const {data: userInfo, message: msg} = resp;
 
-        let resp = await application.login(info);
-        console.log("xxxxxxxxxxxxxxx", resp)
-        if (resp.bizCode === 2000) {
-            message.success(resp.message, 3)
-            // resp.data.login = true
-            // 将消息暂存至redux和sessionStorage中
-            // sessionStorage.setItem("$formOptions",{...resp})
-            // this.props.tempStorageUserInfo(resp.data)//保存用户信息
-            // this.props.saveInLocalCache({
-            //     login: true,//用户的登录状态
-            //     roles: resp.data.roles,//用户拥有的角色
-            //     pages: resp.data.pages,//用户能够访问的页面
-            //     permissions: resp.data.permissions//用户拥有的权限
-            // })//保存菜单信息
-            // message.success('登录成功!', 3)
-            // this.props.history.replace('/admin/sys/user')
-        }
-        console.log('=============================')
-        console.log(info);
-        console.log(resp)
-        console.log('=============================')
+            const {cache} = this.props;
+            console.log("cache", cache)
+            // 将信息暂存至redux 中
+
+            sessionStorage.setItem(settings.token_key, userInfo.password)//token
+            this.props.saveInLocalCache({//异步的更新
+                "tree3life_cache": "只能读,不能写xxxxxxx",
+                login: true,//用户的登录状态
+                token: userInfo.password,
+                // to be optimized@Rupert：将userInfo从cache中进行去除 (2024/5/28 18:34)
+                userInfo: {...cache.userInfo, ...userInfo},
+                // roles: resp.data.roles,//用户拥有的角色
+                // pages: resp.data.pages,//用户能够访问的页面
+                // permissions: resp.data.permissions//用户拥有的权限
+            })//保存菜单信息
+
+            //将用户相关的信息进行保存
+            this.props.storageUserInfo( {...userInfo, token: userInfo.password})
+            message.success(msg)
+            this.props.history.replace('/home/blogs')//router5版本语法
+        }, 500);
     }
 
     render() {
@@ -78,20 +85,21 @@ class Login extends Component {
                             </div>
                             <button className="login-btn" onClick={this.collectData}>登 录</button>
                         </div>
-                        <div className="divider">
-                            <span className="line"></span>
-                            <span className="divider-text">其他方式登录</span>
-                            <span className="line"></span>
-                        </div>
-                        <div className="other-login-wrapper">
-                            <div className="other-login-item">
-                                <img src={qqSrc} alt=""/>
-                            </div>
-                            <div className="other-login-item">
-                                <img src={wcSrc} alt=""/>
+                        {/*todo 实现qq、微信登录*/}
+                        {/*<div className="divider">*/}
+                        {/*    <span className="line"></span>*/}
+                        {/*    <span className="divider-text">其他方式登录</span>*/}
+                        {/*    <span className="line"></span>*/}
+                        {/*</div>*/}
+                        {/*<div className="other-login-wrapper">*/}
+                        {/*    <div className="other-login-item">*/}
+                        {/*        <img src={qqSrc} alt=""/>*/}
+                        {/*    </div>*/}
+                        {/*    <div className="other-login-item">*/}
+                        {/*        <img src={wcSrc} alt=""/>*/}
 
-                            </div>
-                        </div>
+                        {/*    </div>*/}
+                        {/*</div>*/}
                     </div>
                 </div>
             </div>
