@@ -11,11 +11,14 @@ module.exports = override(
         libraryDirectory: 'es',
         style: true,//自动打包相关的样式 默认为 style:'css'
     }),
-    // // 使用less-loader对源码重的less的变量进行重新制定，设置antd自定义主题
-    // addLessLoader({
-    //     javascriptEnabled: true,
-    //     modifyVars:{'@primary-color':'#1DA57A'},
-    // }),
+    // 使用less-loader对源码重的less的变量进行重新制定，设置antd自定义主题
+    addLessLoader({
+        lessOptions: {
+            javascriptEnabled: true,
+            // modifyVars: { '@primary-color': '#afe04f' },
+            modifyVars: { '@primary-color': '#97c244' },
+        },
+    }),
     //添加装饰器语法
     addDecoratorsLegacy(),
     addWebpackAlias({
