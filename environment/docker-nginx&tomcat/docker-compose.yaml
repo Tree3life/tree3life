@@ -1,0 +1,53 @@
+version: '3' #指定docker-compose版本
+services:    #服务根节点
+  suibian:   #给当前服务起名（web服务/nginx服务等）
+    image: nginx:1.22  #指明构建当前服务 所使用的镜像，如果镜像容器没有会去自动拉取
+    container_name: nginx       #容器的名称
+    restart: always             #设置跟随docker的启动而启动
+    volumes:                    #文件挂载卷命令 【宿主机:容器】
+      - ./data_nginx/conf/nginx.conf:/etc/nginx/nginx.conf #映射配置文件入口文件
+      - ./data_nginx/html:/usr/share/nginx/html            #nginx静态资源根目录挂载
+      - ./data_nginx/demo:/usr/share/demo/            #自定义静态资源根目录
+      - ./data_nginx/logs:/var/log/nginx                   #日志文件挂载
+      - ./data_nginx/conf.d:/etc/nginx/conf.d #映射配置文件
+    ports:
+      - "80:80"    #【宿主主机端口10080 ： 容器端口80】
+
+  tomcat_reverseProxy:
+    image: tomcat:8.5.60-jdk8-adoptopenjdk-hotspot
+    container_name: tomcat_reverseProxy
+    restart: always
+    ports:
+      - 10081:8080
+    environment:
+      TZ: "Asia/Shanghai"
+    volumes:
+      - ./data_tomcat1/conf/server.xml:/usr/local/tomcat/server.xml
+      - ./data_tomcat1/webapps:/usr/local/tomcat/webapps
+      - ./data_tomcat1/logs:/usr/local/tomcat/logs
+
+  tomcat_loadbalance1:
+    image: tomcat:8.5.60-jdk8-adoptopenjdk-hotspot
+    container_name: tomcat_loadbalance1
+    restart: always
+    ports:
+      - 10082:8080
+    environment:
+      TZ: "Asia/Shanghai"
+    volumes:
+      #      - ./data_tomcat1/conf/server.xml:/usr/local/tomcat/server.xml
+      - ./data_tomcat2/webapps:/usr/local/tomcat/webapps
+      - ./data_tomcat2/logs:/usr/local/tomcat/logs
+
+  tomcat_loadbalance2:
+    image: tomcat:8.5.60-jdk8-adoptopenjdk-hotspot
+    container_name: tomcat_loadbalance2
+    restart: always
+    ports:
+      - 10083:8080
+    environment:
+      TZ: "Asia/Shanghai"
+    volumes:
+      #      - ./data_tomcat1/conf/server.xml:/usr/local/tomcat/server.xml
+      - ./data_tomcat3/webapps:/usr/local/tomcat/webapps
+      - ./data_tomcat3/logs:/usr/local/tomcat/logs

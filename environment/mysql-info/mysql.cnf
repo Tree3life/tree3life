@@ -1,0 +1,25 @@
+# # # # # # # # # # # # # # # # # # # # # # # #
+# 以下文件夹的各种配置最终会被导入到此处
+!includedir /etc/mysql/conf.d/
+!includedir /etc/mysql/mysql.conf.d/
+# # # # # # # # # # # # # # # # # # # # # # # #
+
+
+# # # # # # # # # # # # # # # # # # # # # # # #  以下的自定义配置将会对 上述文件中的重复配置进行覆盖（类似CSS样式的覆盖）
+# [client]客户端设置； [mysqld] 数据库服务端基本配置； [mysql]使用mysql命令登录mysql数据库时的默认设置；
+
+[mysqld]
+# 设置字符集
+character-set-server=utf8mb4
+collation-server=utf8mb4_general_ci
+# 在mysqld.cnf中进行配置
+sql_mode =STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+
+[client]
+default-character-set=utf8mb4
+
+# mysqld_safe 是服务器端工具，用于启动 mysqld，也是 mysqld 的守护进程。当 mysql 被 kill 时，mysqld_safe 负责重启启动它。
+# [mysqld_safe]
+
+
+# # # # # # # # # # # # # # # # # # # # # # # #

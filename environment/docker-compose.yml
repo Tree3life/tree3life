@@ -1,0 +1,93 @@
+version: "3.2"
+#dockercompose的版本
+
+#本文件用于描述项目所需的'软件环境'，使用docker实现相关软件环境的配置与启动
+
+#创建用于各个docker contanor间通信的网络
+networks:
+  tree3_network:
+
+#自建的数据卷名称
+volumes:
+  mysqldata_tree3:
+  redisdata_tree3:
+  mqdata_tree3:
+
+
+services:
+  nacos:
+    #镜像版本
+    image: nacos/nacos-server:2.0.2
+    #宿主机:容器 端口映射
+    ports:
+      - "8848:8848"
+    #容器的启动配置
+    environment:
+      #nacos的启动最大最小内存
+      - "JVM_XMS=256m"
+      - "JVM_XMX=256m"
+      - "MODE=standalone"
+    #自定义网桥
+    networks:
+      - tree3_network
+
+  #dockerz中mysql容器的配置
+  mysql:
+    image: mysql:5.7 #镜像版本
+    ports:
+      - "3306:3306"
+    networks:
+      - tree3_network
+    volumes:
+      #将宿主机中的文件mysqldata_tree3和容器中的/var/lib/mysql做数据同步
+      - mysqldata_tree3:/var/lib/mysql
+      - ./mysql-info/mysql.cnf:/etc/mysql/mysql.cnf
+#      - ./mysql-info/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+      #首次启动时加载对应的sql文件
+      - ./tree3life.sql:/docker-entrypoint-initdb.d/tree3life.sql
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root"
+      - "MYSQL_DATABASE=tree3life" #数据库名称
+
+
+  redis:
+    image: redis:5.0.10
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata_tree3:/data
+
+
+  rabbitmq:
+    image: rabbitmq:3.7.28-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - tree3_network
+    env_file:
+      - ./rabbitmq.env
+    volumes:
+      - mqdata_tree3:/var/lib/rabbitmq
+
+  es:
+    image: elasticsearch:6.8.0
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./ik/:/usr/share/elasticsearch/plugins/ik
+      - ./jvm.options:/usr/share/elasticsearch/config/jvm.options
+    networks:
+      - tree3_network
+
+  kibana:
+    image: kibana:6.8.0
+    ports:
+      - 5601:5601
+    networks:
+      - tree3_network
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    depends_on:
+      - es
