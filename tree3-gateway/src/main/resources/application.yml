@@ -41,10 +41,19 @@ spring:
           uri: lb://Tree3-Users #转发至              to ；以负载均衡的方式，将请求转发至对应的服务集群进行处理
           predicates:
             #-将用户认证的 管理 剥离成单独的路径 -->/app/**
-            - Path=/token/**,/tokens/**,/users/** ,/app/**,/followings/** #以网关地址接收到的路径    from
+            - Path=/auth/**,/users/** ,/app/**,/followings/** #以网关地址接收到的路径    from
           filters:
             - StripPrefix=1  #去掉请求前缀filter int数字  1:去掉一级 2:去掉两级
             - Logger=true,测试
+
+        #websocket服务器
+        - id: chat_websocket_netty_router
+          uri: lb:ws://Tree3-Chat #转发给Tree3-Chat聊天服务器
+          predicates:
+            - Path=/tree3chat/**
+            - Header=Upgrade
+
+
 
 
       # 网关全局跨域配置
@@ -55,7 +64,7 @@ spring:
             allowedMethods: "*" #允许所有请求方式访问 HTTP 方法类型
             allowedHeaders: "*" # 允许所有的请求头，也可以指定具体的请求头
             allowCredentials: true # 当前端请求携带凭证（cookies/token）时，需开启本选项
-#            add-to-simple-url-handler-mapping: true # 解决options请求被拦截的问题
+            #            add-to-simple-url-handler-mapping: true # 解决options请求被拦截的问题
             #maxAge: 3600 # CORS预检请求的有效期（秒）
 
 

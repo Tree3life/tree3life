@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tree3.dao.ChatHistoryMapper">
+
+    <resultMap type="com.tree3.pojo.entity.ChatHistory" id="ChatHistoryMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="command" column="command" jdbcType="INTEGER"/>
+        <result property="state" column="state" jdbcType="INTEGER"/>
+        <result property="from" column="from" jdbcType="INTEGER"/>
+        <result property="to" column="to" jdbcType="INTEGER"/>
+        <result property="contentType" column="content_type" jdbcType="INTEGER"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="deliveryTime" column="delivery_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="deletedTime" column="deleted_time" jdbcType="TIMESTAMP"/>
+        <result property="deleted" column="deleted" jdbcType="BOOLEAN"/>
+    </resultMap>
+
+    <resultMap type="com.tree3.pojo.dto.ChatHistoryDTO" extends="ChatHistoryMap" id="ChatHistoryDTOMap">
+        <association property="fromUser" column="from"
+                     select="com.tree3.dao.UserMapper.queryByIdInsensitive"
+        />
+    </resultMap>
+
+    <!--全部字段-->
+    <sql id="allColumn"> id
+    , command, `state`, `from`, `to`, content_type, content, create_time, delivery_time, update_time, deleted_time, deleted </sql>
+
+    <!--分页查询-->
+    <sql id="pageConfig">
+        <if test="offset != null and pageSize != null ">
+            limit #{offset} ,#{pageSize}
+        </if>
+    </sql>
+
+    <!--通用对ChatHistory各个属性的值的非空判断-->
+    <sql id="commonsValue">
+        <if test="command != null">
+            command = #{command},
+        </if>
+        <if test="state != null">
+            `state` = #{state},
+        </if>
+        <if test="from != null">
+            `from` = #{from},
+        </if>
+        <if test="to != null">
+            `to` = #{to},
+        </if>
+        <if test="contentType != null">
+            content_type = #{contentType},
+        </if>
+        <if test="content != null and content != ''">
+            content = #{content},
+        </if>
+        <if test="createTime != null">
+            create_time = #{createTime},
+        </if>
+        <if test="deliveryTime != null">
+            delivery_time = #{deliveryTime},
+        </if>
+        <if test="updateTime != null">
+            update_time = #{updateTime},
+        </if>
+        <if test="deletedTime != null">
+            deleted_time = #{deletedTime},
+        </if>
+        <if test="deleted != null">
+            deleted = #{deleted},
+        </if>
+    </sql>
+
+    <!--添加语句的字段列表-->
+    <sql id="insertColumn">
+        <if test="command != null">
+            command,
+        </if>
+        <if test="state != null">
+            `state`,
+        </if>
+        <if test="from != null">
+            `from`,
+        </if>
+        <if test="to != null">
+            `to`,
+        </if>
+        <if test="contentType != null">
+            content_type,
+        </if>
+        <if test="content != null and content != ''">
+            content,
+        </if>
+        <if test="createTime != null">
+            create_time,
+        </if>
+        <if test="deliveryTime != null">
+            delivery_time,
+        </if>
+        <if test="updateTime != null">
+            update_time,
+        </if>
+        <if test="deletedTime != null">
+            deleted_time,
+        </if>
+        <if test="deleted != null">
+            deleted,
+        </if>
+    </sql>
+
+    <!--添加语句的值列表-->
+    <sql id="insertValue">
+        <if test="command != null">
+            #{command},
+        </if>
+        <if test="state != null">
+            #{state},
+        </if>
+        <if test="from != null">
+            #{from},
+        </if>
+        <if test="to != null">
+            #{to},
+        </if>
+        <if test="contentType != null">
+            #{contentType},
+        </if>
+        <if test="content != null and content != ''">
+            #{content},
+        </if>
+        <if test="createTime != null">
+            #{createTime},
+        </if>
+        <if test="deliveryTime != null">
+            #{deliveryTime},
+        </if>
+        <if test="updateTime != null">
+            #{updateTime},
+        </if>
+        <if test="deletedTime != null">
+            #{deletedTime},
+        </if>
+        <if test="deleted != null">
+            #{deleted},
+        </if>
+    </sql>
+
+    <!--多条件查询的条件-->
+    <sql id="queryCondition">
+        <if test="id != null">
+            and id = #{id}
+        </if>
+
+        <if test="command != null">
+            and command = #{command}
+        </if>
+        <if test="state != null">
+            and `state` = #{state}
+        </if>
+        <if test="from != null">
+            and `from` = #{from}
+        </if>
+        <if test="to != null">
+            and `to` = #{to}
+        </if>
+        <if test="contentType != null">
+            and content_type = #{contentType}
+        </if>
+        <if test="content != null and content != ''">
+            and content = #{content}
+        </if>
+        <if test="createTime != null">
+            and create_time = #{createTime}
+        </if>
+        <if test="deliveryTime != null">
+            and delivery_time = #{deliveryTime}
+        </if>
+        <if test="updateTime != null">
+            and update_time = #{updateTime}
+        </if>
+        <if test="deletedTime != null">
+            and deleted_time = #{deletedTime}
+        </if>
+        <if test="deleted != null">
+            and deleted = #{deleted}
+        </if>
+    </sql>
+
+    <!--多条件查询的条件-->
+    <sql id="entityQueryCondition">
+        <if test="chat_history.id != null">
+            and id = #{chat_history.id}
+        </if>
+
+        <if test="chat_history.command != null">
+            and command = #{chat_history.command}
+        </if>
+        <if test="chat_history.state != null">
+            and `state` = #{chat_history.state}
+        </if>
+        <if test="chat_history.from != null">
+            and `from` = #{chat_history.from}
+        </if>
+        <if test="chat_history.to != null">
+            and `to` = #{chat_history.to}
+        </if>
+        <if test="chat_history.contentType != null">
+            and content_type = #{chat_history.contentType}
+        </if>
+        <if test="chat_history.content != null and chat_history.content != ''">
+            and content = #{chat_history.content}
+        </if>
+        <if test="chat_history.createTime != null">
+            and create_time = #{chat_history.createTime}
+        </if>
+        <if test="chat_history.deliveryTime != null">
+            and delivery_time = #{chat_history.deliveryTime}
+        </if>
+        <if test="chat_history.updateTime != null">
+            and update_time = #{chat_history.updateTime}
+        </if>
+        <if test="chat_history.deletedTime != null">
+            and deleted_time = #{chat_history.deletedTime}
+        </if>
+        <if test="chat_history.deleted != null">
+            and deleted = #{chat_history.deleted}
+        </if>
+    </sql>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ChatHistoryMap">
+        select
+        <include refid="allColumn"></include>
+        from chat_history
+        <where>
+            id = #{id}
+        </where>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryChatHistorys" resultMap="ChatHistoryMap">
+        select
+        <include refid="allColumn"></include>
+        from chat_history
+        <trim prefix="where" prefixOverrides="and" suffixOverrides=",">
+            <if test="offset == null and pageSize == null ">
+                <include refid="queryCondition"></include>
+            </if>
+            <if test="offset != null and pageSize != null ">
+                <include refid="entityQueryCondition"></include>
+            </if>
+        </trim>
+        <include refid="pageConfig"></include>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryChatHistoryPro" resultMap="ChatHistoryDTOMap">
+        select
+        <include refid="allColumn"/>
+        from chat_history
+        <trim prefix="where" prefixOverrides="and" suffixOverrides=",">
+            <if test="offset == null and pageSize == null ">
+                <include refid="queryCondition"></include>
+            </if>
+            <if test="offset != null and pageSize != null ">
+                <include refid="entityQueryCondition"></include>
+            </if>
+        </trim>
+        <include refid="pageConfig"></include>
+    </select>
+
+    <!--条件查询单个元素-->
+    <select id="queryChatHistory" resultMap="ChatHistoryMap">
+        select
+        <include refid="allColumn"></include>
+        from chat_history
+        <trim prefix="where" prefixOverrides="and" suffixOverrides=",">
+            <include refid="queryCondition"></include>
+        </trim>
+    </select>
+
+    <select id="countUnreadMessage" resultType="java.lang.Integer">
+        select id
+        from chat_history
+        where command = #{cmd}
+          and `to` = #{to}
+          and `from` = #{from}
+          and `state` = #{state}
+          and create_time > (
+            select create_time as logout_time
+            from chat_history
+            where command = #{cmdLogout}
+              and `from` = #{to}
+            ORDER BY id desc
+            limit 1
+            )
+          and deleted=0
+    </select>
+
+    <update id="updateUnreadMessage">
+        update chat_history
+        <set>
+            `state` =#{state}
+        </set>
+        <where>
+            id in
+            <foreach collection="msgs" separator="," open="(" close=")" item="ele">
+                #{ele}
+            </foreach>
+        </where>
+    </update>
+
+    <!--    查询好友间的最新一条消息-->
+    <select id="queryLastHistory" resultMap="ChatHistoryMap">
+        select
+        <include refid="allColumn"/>
+        from chat_history
+        where `from` = #{userA} and `to` = #{userB} and command =#{cmd}
+        UNION
+        select
+        <include refid="allColumn"/>
+        from chat_history
+        where `from` = #{userB} and `to` = #{userA} and command =#{cmd}
+        ORDER BY create_time desc LIMIT 1
+    </select>
+
+
+    <select id="queryFriendsChatHistory" resultMap="ChatHistoryMap">
+        select *
+        from chat_history
+        where `from` = #{userA}
+          and `to` = #{userB}
+          and command = #{cmd}
+        UNION
+        select *
+        from chat_history
+        where `from` = #{userB}
+          and `to` = #{userA}
+          and command = #{cmd}
+        ORDER BY create_time asc
+    </select>
+
+
+    <!--查询 群聊中最后一条群消息-->
+    <select id="queryGroupLastChatHistory" resultMap="ChatHistoryDTOMap">
+        select *
+        from chat_history
+        where `to` = #{to}
+          and command = #{command}
+        ORDER BY create_time desc LIMIT 1;
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from chat_history
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="command != null">
+                and command = #{command}
+            </if>
+            <if test="state != null">
+                and `state` = #{state}
+            </if>
+            <if test="from != null">
+                and `from` = #{from}
+            </if>
+            <if test="to != null">
+                and `to` = #{to}
+            </if>
+            <if test="contentType != null">
+                and content_type = #{contentType}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="deliveryTime != null">
+                and delivery_time = #{deliveryTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="deletedTime != null">
+                and deleted_time = #{deletedTime}
+            </if>
+            <if test="deleted != null">
+                and deleted = #{deleted}
+            </if>
+        </where>
+    </select>
+
+
+    <!--通过主键修改数据,不使用动态`where标签`的原因：防止主键不传参，直接对全表数据进行写操作-->
+    <update id="update">
+        update chat_history
+        <set>
+            <include refid="commonsValue"></include>
+        </set>
+        where id = #{id} limit 1
+    </update>
+
+
+    <!--通过主键删除,不使用动态`where标签`的原因：防止主键不传参，直接对全表数据进行写操作-->
+    <delete id="deleteById">
+        delete
+        from chat_history
+        where id = #{id} limit 1
+    </delete>
+
+
+    <!--通过实体类删除,不使用动态`where标签`的原因：防止主键不传参，直接对全表数据进行写操作-->
+    <delete id="deleteByChatHistory">
+        delete
+        from chat_history
+        where
+        <trim prefix="" prefixOverrides="and" suffixOverrides=",">
+            <include refid="queryCondition"></include>
+        </trim>
+    </delete>
+
+    <!--通过主键逻辑删除-->
+    <delete id="logicDeleteById">
+        update chat_history
+        <set>
+            deleted=1
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </delete>
+
+
+    <!--新增chat_history:哪个字段不为空就添加哪列数据,返回自增主键-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into chat_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="insertColumn"/>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <include refid="insertValue"/>
+        </trim>
+    </insert>
+
+    <!--批量插入-->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into chat_history(command, `state`, `from`, `to`, content_type, content, create_time, delivery_time,
+        update_time, deleted_time, deleted)
+        values
+        <foreach collection="chatHistorys" item="chatHistory" separator=",">
+            (#{chatHistory.command}, #{chatHistory.state}, #{chatHistory.from}, #{chatHistory.to},
+            #{chatHistory.contentType}, #{chatHistory.content}, #{chatHistory.createTime}, #{chatHistory.deliveryTime},
+            #{chatHistory.updateTime}, #{chatHistory.deletedTime}, #{chatHistory.deleted})
+        </foreach>
+    </insert>
+
+    <!--批量插入或更新-->
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into chat_history(id,command, `state`, `from`, `to`, content_type, content, create_time, delivery_time,
+        update_time, deleted_time, deleted)
+        values
+        <foreach collection="chatHistorys" item="chatHistory" separator=",">
+            (#{chatHistory.id},#{chatHistory.command}, #{chatHistory.state}, #{chatHistory.from}, #{chatHistory.to},
+            #{chatHistory.contentType}, #{chatHistory.content}, #{chatHistory.createTime}, #{chatHistory.deliveryTime},
+            #{chatHistory.updateTime}, #{chatHistory.deletedTime}, #{chatHistory.deleted})
+        </foreach>
+        on duplicate key update
+        command = values(command),
+        `state` = values(state),
+        `from` = values(from),
+        `to` = values(to),
+        content_type = values(content_type),
+        content = values(content),
+        create_time = values(create_time),
+        delivery_time = values(delivery_time),
+        update_time = values(update_time),
+        deleted_time = values(deleted_time),
+        deleted = values(deleted)
+    </insert>
+
+</mapper>
+

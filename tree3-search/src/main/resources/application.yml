@@ -14,4 +14,6 @@ logging:
     com.tree3.dao: debug
     com.tree3.controller: trace
 app:
+  salt: tree3,
+  hash-iterations: 1024
   showCase: true

@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tree3.dao.ChatGroupMapper">
+
+    <resultMap type="com.tree3.pojo.entity.ChatGroup" id="ChatGroupMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="intro" column="intro" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="INTEGER"/>
+        <result property="deleted" column="deleted" jdbcType="BOOLEAN"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="deletedTime" column="deleted_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <resultMap type="com.tree3.pojo.dto.ChatGroupDTO" id="ChatGroupDTOMap" extends="ChatGroupMap">
+        <association property="lastHistory"
+                     column="{
+                    command=command,
+                    to=id,
+                    deleted=deleted
+                    }"
+                     select="com.tree3.dao.ChatHistoryMapper.queryGroupLastChatHistory"/>
+        <collection property="members"
+                    column="{groupId=id}"
+                    select="com.tree3.dao.ChatGroupMemberMapper.queryChatGroupMembersPro"
+        />
+    </resultMap>
+
+    <resultMap type="com.tree3.pojo.dto.ChatGroupDTO" id="ChatGroupDTOMapWithHistory" extends="ChatGroupDTOMap">
+        <collection property="histories"
+                    column="{
+                    command=command,
+                    to=id,
+                    deleted=deleted
+                    }"
+                    select="com.tree3.dao.ChatHistoryMapper.queryChatHistoryPro"
+        />
+    </resultMap>
+
+    <!--全部字段-->
+    <sql id="allColumn"> id
+    , group_name, avatar, intro, creator, deleted, create_time, update_time, deleted_time </sql>
+
+    <!--分页查询-->
+    <sql id="pageConfig">
+        <if test="offset != null and pageSize != null ">
+            limit #{offset} ,#{pageSize}
+        </if>
+    </sql>
+
+    <!--通用对ChatGroup各个属性的值的非空判断-->
+    <sql id="commonsValue">
+        <if test="groupName != null and groupName != ''">
+            group_name = #{groupName},
+        </if>
+        <if test="avatar != null and avatar != ''">
+            avatar = #{avatar},
+        </if>
+        <if test="intro != null and intro != ''">
+            intro = #{intro},
+        </if>
+        <if test="creator != null">
+            creator = #{creator},
+        </if>
+        <if test="deleted != null">
+            deleted = #{deleted},
+        </if>
+        <if test="createTime != null">
+            create_time = #{createTime},
+        </if>
+        <if test="updateTime != null">
+            update_time = #{updateTime},
+        </if>
+        <if test="deletedTime != null">
+            deleted_time = #{deletedTime},
+        </if>
+    </sql>
+
+    <!--添加语句的字段列表-->
+    <sql id="insertColumn">
+        <if test="groupName != null and groupName != ''">
+            group_name,
+        </if>
+        <if test="avatar != null and avatar != ''">
+            avatar,
+        </if>
+        <if test="intro != null and intro != ''">
+            intro,
+        </if>
+        <if test="creator != null">
+            creator,
+        </if>
+        <if test="deleted != null">
+            deleted,
+        </if>
+        <if test="createTime != null">
+            create_time,
+        </if>
+        <if test="updateTime != null">
+            update_time,
+        </if>
+        <if test="deletedTime != null">
+            deleted_time,
+        </if>
+    </sql>
+
+    <!--添加语句的值列表-->
+    <sql id="insertValue">
+        <if test="groupName != null and groupName != ''">
+            #{groupName},
+        </if>
+        <if test="avatar != null and avatar != ''">
+            #{avatar},
+        </if>
+        <if test="intro != null and intro != ''">
+            #{intro},
+        </if>
+        <if test="creator != null">
+            #{creator},
+        </if>
+        <if test="deleted != null">
+            #{deleted},
+        </if>
+        <if test="createTime != null">
+            #{createTime},
+        </if>
+        <if test="updateTime != null">
+            #{updateTime},
+        </if>
+        <if test="deletedTime != null">
+            #{deletedTime},
+        </if>
+    </sql>
+
+    <!--多条件查询的条件-->
+    <sql id="queryCondition">
+        <if test="id != null">
+            and id = #{id}
+        </if>
+
+        <if test="groupName != null and groupName != ''">
+            and group_name = #{groupName}
+        </if>
+        <if test="avatar != null and avatar != ''">
+            and avatar = #{avatar}
+        </if>
+        <if test="intro != null and intro != ''">
+            and intro = #{intro}
+        </if>
+        <if test="creator != null">
+            and creator = #{creator}
+        </if>
+        <if test="deleted != null">
+            and deleted = #{deleted}
+        </if>
+        <if test="createTime != null">
+            and create_time = #{createTime}
+        </if>
+        <if test="updateTime != null">
+            and update_time = #{updateTime}
+        </if>
+        <if test="deletedTime != null">
+            and deleted_time = #{deletedTime}
+        </if>
+    </sql>
+
+
+    <!--多条件查询的条件-->
+    <sql id="entityQueryCondition">
+        <if test="chat_group.id != null">
+            and id = #{chat_group.id}
+        </if>
+
+        <if test="chat_group.groupName != null and chat_group.groupName != ''">
+            and group_name = #{chat_group.groupName}
+        </if>
+        <if test="chat_group.avatar != null and chat_group.avatar != ''">
+            and avatar = #{chat_group.avatar}
+        </if>
+        <if test="chat_group.intro != null and chat_group.intro != ''">
+            and intro = #{chat_group.intro}
+        </if>
+        <if test="chat_group.creator != null">
+            and creator = #{chat_group.creator}
+        </if>
+        <if test="chat_group.deleted != null">
+            and deleted = #{chat_group.deleted}
+        </if>
+        <if test="chat_group.createTime != null">
+            and create_time = #{chat_group.createTime}
+        </if>
+        <if test="chat_group.updateTime != null">
+            and update_time = #{chat_group.updateTime}
+        </if>
+        <if test="chat_group.deletedTime != null">
+            and deleted_time = #{chat_group.deletedTime}
+        </if>
+    </sql>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ChatGroupMap">
+        select
+        <include refid="allColumn"></include>
+        from chat_group
+        <where>
+            id = #{id}
+        </where>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryChatGroups" resultMap="ChatGroupMap">
+        select
+        <include refid="allColumn"></include>
+        from chat_group
+        <trim prefix="where" prefixOverrides="and" suffixOverrides=",">
+            <if test="offset == null and pageSize == null ">
+                <include refid="queryCondition"></include>
+            </if>
+            <if test="offset != null and pageSize != null ">
+                <include refid="entityQueryCondition"></include>
+            </if>
+        </trim>
+        <include refid="pageConfig"></include>
+    </select>
+
+    <!--条件查询单个元素-->
+    <select id="queryChatGroup" resultMap="ChatGroupMap">
+        select
+        <include refid="allColumn"></include>
+        from chat_group
+        <trim prefix="where" prefixOverrides="and" suffixOverrides=",">
+            <include refid="queryCondition"></include>
+        </trim>
+    </select>
+
+    <select id="queryChatGroupPro" resultMap="ChatGroupDTOMapWithHistory">
+        select m.group_id    as id,
+               m.user_id     as user_id,
+               m.remark_name as remark_name,
+               g.group_name  as group_name,
+               g.avatar      as avatar,
+               g.intro       as intro,
+               #{command}    as command,
+               0             as deleted
+        from chat_group_member m
+                 left join chat_group g
+                           on m.group_id = g.id
+        WHERE user_id = #{userId}
+          and m.deleted = 0
+          and g.deleted = 0
+    </select>
+
+    <select id="queryChatGroupWithLastMessage" resultMap="ChatGroupDTOMap">
+        select m.group_id    as id,
+               m.user_id     as user_id,
+               m.remark_name as remark_name,
+               g.group_name  as group_name,
+               g.avatar      as avatar,
+               g.intro       as intro,
+               #{command}    as command,
+               0             as deleted
+        from chat_group_member m
+                 left join chat_group g
+                           on m.group_id = g.id
+        WHERE user_id = #{userId}
+          and m.deleted = 0
+          and g.deleted = 0
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from chat_group
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="groupName != null and groupName != ''">
+                and group_name = #{groupName}
+            </if>
+            <if test="avatar != null and avatar != ''">
+                and avatar = #{avatar}
+            </if>
+            <if test="intro != null and intro != ''">
+                and intro = #{intro}
+            </if>
+            <if test="creator != null">
+                and creator = #{creator}
+            </if>
+            <if test="deleted != null">
+                and deleted = #{deleted}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="deletedTime != null">
+                and deleted_time = #{deletedTime}
+            </if>
+        </where>
+    </select>
+
+
+    <!--通过主键修改数据,不使用动态`where标签`的原因：防止主键不传参，直接对全表数据进行写操作-->
+    <update id="update">
+        update chat_group
+        <set>
+            <include refid="commonsValue"></include>
+        </set>
+        where id = #{id} limit 1
+    </update>
+
+    <!--通过主键删除,不使用动态`where标签`的原因：防止主键不传参，直接对全表数据进行写操作-->
+    <delete id="deleteById">
+        delete
+        from chat_group
+        where id = #{id} limit 1
+    </delete>
+
+
+    <!--通过实体类删除,不使用动态`where标签`的原因：防止主键不传参，直接对全表数据进行写操作-->
+    <delete id="deleteByChatGroup">
+        delete
+        from chat_group
+        where
+        <trim prefix="" prefixOverrides="and" suffixOverrides=",">
+            <include refid="queryCondition"></include>
+        </trim>
+    </delete>
+
+    <!--通过主键逻辑删除-->
+    <delete id="logicDeleteById">
+        update chat_group
+        <set>
+            deleted=1
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </delete>
+
+
+    <!--新增chat_group:哪个字段不为空就添加哪列数据,返回自增主键-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into chat_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="insertColumn"/>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <include refid="insertValue"/>
+        </trim>
+    </insert>
+
+    <!--批量插入-->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into chat_group(group_name, avatar, intro, creator, deleted, create_time, update_time, deleted_time)
+        values
+        <foreach collection="chatGroups" item="chatGroup" separator=",">
+            (#{chatGroup.groupName}, #{chatGroup.avatar}, #{chatGroup.intro}, #{chatGroup.creator},
+            #{chatGroup.deleted}, #{chatGroup.createTime}, #{chatGroup.updateTime}, #{chatGroup.deletedTime})
+        </foreach>
+    </insert>
+
+    <!--批量插入或更新-->
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into chat_group(id,group_name, avatar, intro, creator, deleted, create_time, update_time, deleted_time)
+        values
+        <foreach collection="chatGroups" item="chatGroup" separator=",">
+            (#{chatGroup.id},#{chatGroup.groupName}, #{chatGroup.avatar}, #{chatGroup.intro}, #{chatGroup.creator},
+            #{chatGroup.deleted}, #{chatGroup.createTime}, #{chatGroup.updateTime}, #{chatGroup.deletedTime})
+        </foreach>
+        on duplicate key update
+        group_name = values(group_name),
+        avatar = values(avatar),
+        intro = values(intro),
+        creator = values(creator),
+        deleted = values(deleted),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        deleted_time = values(deleted_time)
+    </insert>
+
+</mapper>
+

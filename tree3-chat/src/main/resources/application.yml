@@ -1,20 +1,71 @@
-server:
-  port: 9202
+netty:
+  ws:
+    port: 9202
 
 spring:
   application:
-#    聊天服务
+    #    聊天服务
     name: Tree3-Chat
   cloud:
     nacos:
       server-addr: 192.168.154.101:8848
 
 
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.154.101:3306/tree3life?characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: root
 
+  redis:
+    host: 192.168.154.101
+    port: 6379
+
+  rabbitmq:
+    host: 192.168.154.101
+    port: 5672
+    username: guest
+    password: guest
+    #    virtual-host: / #类似于数据库概念
+    virtual-host: tree3life #类似于数据库概念
+    #region消息补偿机制的相关配置
+    #生产端 保证消息的可靠性
+    publisher-confirm-type: correlated  # 开启发送方确认机制 (none：禁用发送方确认机制,correlated：开启发送方确认机制,simple：表示开启发送方确认机制，并支持 waitForConfirms() 和 waitForConfirmsOrDie() 的调用。)
+    publisher-returns: true #是否要求消息发布者返回结果（路由失败 消息回退）。true:消息发布者必须返回结果，以确认消息是否成功发布。false:消息发布者不需要返回结果，消息发布后不会进行确认。
+    template:
+      mandatory: true # 设置模板是否为必选项。true:模板是必选的，即消息中必须包含该模板。false:模板可选，消息中可以不包含该模板。(mandatory 分为 true 失败后返回客户端 和 false 失败后自动删除两种策略。显然设置为 false 无法保证消息的可靠性。)
+    #消费端 保证消息的可靠性
+    listener:
+      simple:
+        acknowledge-mode: manual # 手动ack
+        #初始连接数量
+        concurrency: 5 #设置消费者的初始连接数量。表示同时处理的消息数量
+        #最大连接数量
+        max-concurrency: 10 # 设置消费者的最大连接数量。表示允许的最大同时处理的消息数量。
+        #限流
+        #默认的PrefetchCount是250，采用Round-robin dispatching，效率低；
+        #通过containerFactory.setPrefetchCount(1)即可启用fair 转发，达到能者多劳的效果
+        #todo 查看源码确认——?PrefetchCount和prefetch是一个作用吗
+        prefetch: 1 # 设置消费者的预取计数。表示在消费者处理完当前消息之前，不会从RabbitMQ服务器获取更多的消息。
+      # todo 测试：消费端 消息重试（通过配置在消费者的方法上如果执行失败或执行异常只需要抛出异常
+      #（一定要出现异常才会触发重试，注意：！！！不要捕获！！！异常） 即可实现消息重试，这样也可以保证消息的可靠性。）
+    #      direct:
+    #        retry:
+    #          enabled: true # 开启消费者失败重试机制
+    #          initial-interval: 5000ms # 初始失败等待时长为5秒
+    #          multiplier: 1  # 失败的等待时长倍数（下次等待时长 = multiplier * 上次等待时间）
+    #          max-attempts: 3 # 最大重试次数
+    #          stateless: true # true无状态；false有状态（如果业务中包含事务，这里改为false）
+    #endregion消息补偿机制的相关配置
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.tree3.mapper.pojo.entity
 
 logging:
   level:
+    com.tree3: debug
     com.tree3.dao: debug
-    com.tree3.controller: trace
 app:
   showCase: true

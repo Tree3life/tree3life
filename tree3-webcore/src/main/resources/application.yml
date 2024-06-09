@@ -14,3 +14,9 @@ logging:
 
 app:
   showCase: true
+
+
+spring:
+  redis:
+    host: 192.168.154.101
+    port: 6379

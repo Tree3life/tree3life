@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tree3.dao.ChatFriendsMapper">
+
+    <resultMap type="com.tree3.pojo.entity.ChatFriends" id="ChatFriendsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
+        <result property="friendId" column="friend_id" jdbcType="INTEGER"/>
+        <result property="deleted" column="deleted" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="deletedTime" column="deleted_time" jdbcType="TIMESTAMP"/>
+        <result property="remarkName" column="remark_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.tree3.pojo.dto.ChatFriendDTO" id="ChatFriendDTOMap" extends="ChatFriendsMap">
+        <association property="countUnread"
+                     column="{from=friend_id,to=user_id,cmd=cmd,cmdLogout=cmdLogout,state=msgState}"
+                     select="com.tree3.dao.ChatHistoryMapper.countUnreadMessage"/>
+
+        <association property="friend"
+                     column="friend_id"
+                     select="com.tree3.dao.UserMapper.queryById"
+        />
+        <association property="lastHistory"
+                     column="{userA=user_id,userB=friend_id,cmd=cmd}"
+                     select="com.tree3.dao.ChatHistoryMapper.queryLastHistory"/>
+    </resultMap>
+
+    <resultMap type="com.tree3.pojo.dto.ChatFriendDTO" id="ChatFriendDTOMapWithHistory" extends="ChatFriendsMap">
+
+        <collection property="histories"
+                    column="{userA=friend_id,userB=user_id,cmd=cmd}"
+                    select="com.tree3.dao.ChatHistoryMapper.queryFriendsChatHistory"
+        />
+    </resultMap>
+
+    <!--全部字段-->
+    <sql id="allColumn"> id
+    , user_id, category_id, friend_id, deleted, create_time, update_time, deleted_time, remark_name </sql>
+
+    <!--分页查询-->
+    <sql id="pageConfig">
+        <if test="offset != null and pageSize != null ">
+            limit #{offset} ,#{pageSize}
+        </if>
+    </sql>
+
+    <!--通用对ChatFriends各个属性的值的非空判断-->
+    <sql id="commonsValue">
+        <if test="userId != null">
+            user_id = #{userId},
+        </if>
+        <if test="categoryId != null">
+            category_id = #{categoryId},
+        </if>
+        <if test="friendId != null">
+            friend_id = #{friendId},
+        </if>
+        <if test="deleted != null">
+            deleted = #{deleted},
+        </if>
+        <if test="createTime != null">
+            create_time = #{createTime},
+        </if>
+        <if test="updateTime != null">
+            update_time = #{updateTime},
+        </if>
+        <if test="deletedTime != null">
+            deleted_time = #{deletedTime},
+        </if>
+        <if test="remarkName != null and remarkName != ''">
+            remark_name = #{remarkName},
+        </if>
+    </sql>
+
+    <!--添加语句的字段列表-->
+    <sql id="insertColumn">
+        <if test="userId != null">
+            user_id,
+        </if>
+        <if test="categoryId != null">
+            category_id,
+        </if>
+        <if test="friendId != null">
+            friend_id,
+        </if>
+        <if test="deleted != null">
+            deleted,
+        </if>
+        <if test="createTime != null">
+            create_time,
+        </if>
+        <if test="updateTime != null">
+            update_time,
+        </if>
+        <if test="deletedTime != null">
+            deleted_time,
+        </if>
+        <if test="remarkName != null and remarkName != ''">
+            remark_name,
+        </if>
+    </sql>
+
+    <!--添加语句的值列表-->
+    <sql id="insertValue">
+        <if test="userId != null">
+            #{userId},
+        </if>
+        <if test="categoryId != null">
+            #{categoryId},
+        </if>
+        <if test="friendId != null">
+            #{friendId},
+        </if>
+        <if test="deleted != null">
+            #{deleted},
+        </if>
+        <if test="createTime != null">
+            #{createTime},
+        </if>
+        <if test="updateTime != null">
+            #{updateTime},
+        </if>
+        <if test="deletedTime != null">
+            #{deletedTime},
+        </if>
+        <if test="remarkName != null and remarkName != ''">
+            #{remarkName},
+        </if>
+    </sql>
+
+    <!--多条件查询的条件-->
+    <sql id="queryCondition">
+        <if test="id != null">
+            and id = #{id}
+        </if>
+
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="categoryId != null">
+            and category_id = #{categoryId}
+        </if>
+        <if test="friendId != null">
+            and friend_id = #{friendId}
+        </if>
+        <if test="deleted != null">
+            and deleted = #{deleted}
+        </if>
+        <if test="createTime != null">
+            and create_time = #{createTime}
+        </if>
+        <if test="updateTime != null">
+            and update_time = #{updateTime}
+        </if>
+        <if test="deletedTime != null">
+            and deleted_time = #{deletedTime}
+        </if>
+        <if test="remarkName != null and remarkName != ''">
+            and remark_name = #{remarkName}
+        </if>
+    </sql>
+
+    <!--多条件查询的条件-->
+    <sql id="entityQueryCondition">
+        <if test="chat_friends.id != null">
+            and id = #{chat_friends.id}
+        </if>
+
+        <if test="chat_friends.userId != null">
+            and user_id = #{chat_friends.userId}
+        </if>
+        <if test="chat_friends.categoryId != null">
+            and category_id = #{chat_friends.categoryId}
+        </if>
+        <if test="chat_friends.friendId != null">
+            and friend_id = #{chat_friends.friendId}
+        </if>
+        <if test="chat_friends.deleted != null">
+            and deleted = #{chat_friends.deleted}
+        </if>
+        <if test="chat_friends.createTime != null">
+            and create_time = #{chat_friends.createTime}
+        </if>
+        <if test="chat_friends.updateTime != null">
+            and update_time = #{chat_friends.updateTime}
+        </if>
+        <if test="chat_friends.deletedTime != null">
+            and deleted_time = #{chat_friends.deletedTime}
+        </if>
+        <if test="chat_friends.remarkName != null and chat_friends.remarkName != ''">
+            and remark_name = #{chat_friends.remarkName}
+        </if>
+    </sql>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ChatFriendsMap">
+        select
+        <include refid="allColumn"></include>
+        from chat_friends
+        <where>
+            id = #{id}
+        </where>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryChatFriendss" resultMap="ChatFriendsMap">
+        select
+        <include refid="allColumn"></include>
+        from chat_friends
+        <trim prefix="where" prefixOverrides="and" suffixOverrides=",">
+            <if test="offset == null and pageSize == null ">
+                <include refid="queryCondition"></include>
+            </if>
+            <if test="offset != null and pageSize != null ">
+                <include refid="entityQueryCondition"></include>
+            </if>
+        </trim>
+        <include refid="pageConfig"></include>
+    </select>
+
+    <!--条件查询单个元素-->
+    <select id="queryChatFriends" resultMap="ChatFriendsMap">
+        select
+        <include refid="allColumn"></include>
+        from chat_friends
+        <trim prefix="where" prefixOverrides="and" suffixOverrides=",">
+            <include refid="queryCondition"></include>
+        </trim>
+    </select>
+
+    <!--关联查询用户 朋友的个人信息和两者的最近的一条聊天记录-->
+    <select id="queryChatFriendsWidthLastMsg" resultMap="ChatFriendDTOMap">
+        select
+        <include refid="allColumn"></include>,
+        #{msgState} as msgState,
+        #{cmd} as cmd,
+        #{cmdLogout} as cmdLogout
+        from chat_friends
+        <trim prefix="where" prefixOverrides="and" suffixOverrides=",">
+            <include refid="queryCondition"></include>
+        </trim>
+    </select>
+
+    <select id="queryChatFriendsWidthHistory" resultMap="ChatFriendDTOMapWithHistory">
+        select
+        <include refid="allColumn"></include>
+        from chat_friends
+        <trim prefix="where" prefixOverrides="and" suffixOverrides=",">
+            <include refid="queryCondition"></include>
+        </trim>
+    </select>
+
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from chat_friends
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="friendId != null">
+                and friend_id = #{friendId}
+            </if>
+            <if test="deleted != null">
+                and deleted = #{deleted}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="deletedTime != null">
+                and deleted_time = #{deletedTime}
+            </if>
+            <if test="remarkName != null and remarkName != ''">
+                and remark_name = #{remarkName}
+            </if>
+        </where>
+    </select>
+
+
+    <!--通过主键修改数据,不使用动态`where标签`的原因：防止主键不传参，直接对全表数据进行写操作-->
+    <update id="update">
+        update chat_friends
+        <set>
+            <include refid="commonsValue"></include>
+        </set>
+        where id = #{id} limit 1
+    </update>
+
+    <!--通过主键删除,不使用动态`where标签`的原因：防止主键不传参，直接对全表数据进行写操作-->
+    <delete id="deleteById">
+        delete
+        from chat_friends
+        where id = #{id} limit 1
+    </delete>
+
+
+    <!--通过实体类删除,不使用动态`where标签`的原因：防止主键不传参，直接对全表数据进行写操作-->
+    <delete id="deleteByChatFriends">
+        delete
+        from chat_friends
+        where
+        <trim prefix="" prefixOverrides="and" suffixOverrides=",">
+            <include refid="queryCondition"></include>
+        </trim>
+    </delete>
+
+    <!--通过主键逻辑删除-->
+    <delete id="logicDeleteById">
+        update chat_friends
+        <set>
+            deleted=1
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </delete>
+
+
+    <!--新增chat_friends:哪个字段不为空就添加哪列数据,返回自增主键-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into chat_friends
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="insertColumn"/>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <include refid="insertValue"/>
+        </trim>
+    </insert>
+
+    <!--批量插入-->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into chat_friends(user_id, category_id, friend_id, deleted, create_time, update_time, deleted_time,
+        remark_name)
+        values
+        <foreach collection="chatFriendss" item="chatFriends" separator=",">
+            (#{chatFriends.userId}, #{chatFriends.categoryId}, #{chatFriends.friendId}, #{chatFriends.deleted},
+            #{chatFriends.createTime}, #{chatFriends.updateTime}, #{chatFriends.deletedTime}, #{chatFriends.remarkName})
+        </foreach>
+    </insert>
+
+    <!--批量插入或更新-->
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into chat_friends(id,user_id, category_id, friend_id, deleted, create_time, update_time, deleted_time,
+        remark_name)
+        values
+        <foreach collection="chatFriendss" item="chatFriends" separator=",">
+            (#{chatFriends.id},#{chatFriends.userId}, #{chatFriends.categoryId}, #{chatFriends.friendId},
+            #{chatFriends.deleted}, #{chatFriends.createTime}, #{chatFriends.updateTime}, #{chatFriends.deletedTime},
+            #{chatFriends.remarkName})
+        </foreach>
+        on duplicate key update
+        user_id = values(user_id),
+        category_id = values(category_id),
+        friend_id = values(friend_id),
+        deleted = values(deleted),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        deleted_time = values(deleted_time),
+        remark_name = values(remark_name)
+    </insert>
+
+</mapper>
+

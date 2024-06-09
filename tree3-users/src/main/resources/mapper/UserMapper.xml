@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tree3.dao.UserMapper">
+
+    <resultMap type="com.tree3.pojo.entity.User" id="UserMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="INTEGER"/>
+        <result property="gender" column="gender" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="phoneLinked" column="phone_linked" jdbcType="BOOLEAN"/>
+        <result property="openid" column="openid" jdbcType="INTEGER"/>
+        <result property="wechatLinked" column="wechat_linked" jdbcType="BOOLEAN"/>
+        <result property="intro" column="intro" jdbcType="VARCHAR"/>
+        <result property="locked" column="locked" jdbcType="BOOLEAN"/>
+        <result property="deleted" column="deleted" jdbcType="BOOLEAN"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="deletedTime" column="deleted_time" jdbcType="TIMESTAMP"/>
+        <result property="payload" column="payload" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--全部字段-->
+    <sql id="allColumn"> id
+    , username, password, avatar, name, age, gender, phone, phone_linked, openid, wechat_linked, intro, locked, deleted, create_time, update_time, deleted_time, payload </sql>
+
+    <!--分页查询-->
+    <sql id="pageConfig">
+        <if test="offset != null and pageSize != null ">
+            limit #{offset} ,#{pageSize}
+        </if>
+    </sql>
+
+    <!--通用对User各个属性的值的非空判断-->
+    <sql id="commonsValue">
+        <if test="username != null and username != ''">
+            username = #{username},
+        </if>
+        <if test="password != null and password != ''">
+            password = #{password},
+        </if>
+        <if test="avatar != null and avatar != ''">
+            avatar = #{avatar},
+        </if>
+        <if test="name != null and name != ''">
+            name = #{name},
+        </if>
+        <if test="age != null">
+            age = #{age},
+        </if>
+        <if test="gender != null and gender != ''">
+            gender = #{gender},
+        </if>
+        <if test="phone != null and phone != ''">
+            phone = #{phone},
+        </if>
+        <if test="phoneLinked != null">
+            phone_linked = #{phoneLinked},
+        </if>
+        <if test="openid != null">
+            openid = #{openid},
+        </if>
+        <if test="wechatLinked != null">
+            wechat_linked = #{wechatLinked},
+        </if>
+        <if test="intro != null and intro != ''">
+            intro = #{intro},
+        </if>
+        <if test="locked != null">
+            locked = #{locked},
+        </if>
+        <if test="deleted != null">
+            deleted = #{deleted},
+        </if>
+        <if test="createTime != null">
+            create_time = #{createTime},
+        </if>
+        <if test="updateTime != null">
+            update_time = #{updateTime},
+        </if>
+        <if test="deletedTime != null">
+            deleted_time = #{deletedTime},
+        </if>
+        <if test="payload != null and payload != ''">
+            payload = #{payload},
+        </if>
+    </sql>
+
+    <!--添加语句的字段列表-->
+    <sql id="insertColumn">
+        <if test="username != null and username != ''">
+            username,
+        </if>
+        <if test="password != null and password != ''">
+            password,
+        </if>
+        <if test="avatar != null and avatar != ''">
+            avatar,
+        </if>
+        <if test="name != null and name != ''">
+            name,
+        </if>
+        <if test="age != null">
+            age,
+        </if>
+        <if test="gender != null and gender != ''">
+            gender,
+        </if>
+        <if test="phone != null and phone != ''">
+            phone,
+        </if>
+        <if test="phoneLinked != null">
+            phone_linked,
+        </if>
+        <if test="openid != null">
+            openid,
+        </if>
+        <if test="wechatLinked != null">
+            wechat_linked,
+        </if>
+        <if test="intro != null and intro != ''">
+            intro,
+        </if>
+        <if test="locked != null">
+            locked,
+        </if>
+        <if test="deleted != null">
+            deleted,
+        </if>
+        <if test="createTime != null">
+            create_time,
+        </if>
+        <if test="updateTime != null">
+            update_time,
+        </if>
+        <if test="deletedTime != null">
+            deleted_time,
+        </if>
+        <if test="payload != null and payload != ''">
+            payload,
+        </if>
+    </sql>
+
+    <!--添加语句的值列表-->
+    <sql id="insertValue">
+        <if test="username != null and username != ''">
+            #{username},
+        </if>
+        <if test="password != null and password != ''">
+            #{password},
+        </if>
+        <if test="avatar != null and avatar != ''">
+            #{avatar},
+        </if>
+        <if test="name != null and name != ''">
+            #{name},
+        </if>
+        <if test="age != null">
+            #{age},
+        </if>
+        <if test="gender != null and gender != ''">
+            #{gender},
+        </if>
+        <if test="phone != null and phone != ''">
+            #{phone},
+        </if>
+        <if test="phoneLinked != null">
+            #{phoneLinked},
+        </if>
+        <if test="openid != null">
+            #{openid},
+        </if>
+        <if test="wechatLinked != null">
+            #{wechatLinked},
+        </if>
+        <if test="intro != null and intro != ''">
+            #{intro},
+        </if>
+        <if test="locked != null">
+            #{locked},
+        </if>
+        <if test="deleted != null">
+            #{deleted},
+        </if>
+        <if test="createTime != null">
+            #{createTime},
+        </if>
+        <if test="updateTime != null">
+            #{updateTime},
+        </if>
+        <if test="deletedTime != null">
+            #{deletedTime},
+        </if>
+        <if test="payload != null and payload != ''">
+            #{payload},
+        </if>
+    </sql>
+
+    <!--多条件查询的条件-->
+    <sql id="queryCondition">
+        <if test="id != null">
+            and id = #{id}
+        </if>
+
+        <if test="username != null and username != ''">
+            and username = #{username}
+        </if>
+        <if test="password != null and password != ''">
+            and password = #{password}
+        </if>
+        <if test="avatar != null and avatar != ''">
+            and avatar = #{avatar}
+        </if>
+        <if test="name != null and name != ''">
+            and name = #{name}
+        </if>
+        <if test="age != null">
+            and age = #{age}
+        </if>
+        <if test="gender != null and gender != ''">
+            and gender = #{gender}
+        </if>
+        <if test="phone != null and phone != ''">
+            and phone = #{phone}
+        </if>
+        <if test="phoneLinked != null">
+            and phone_linked = #{phoneLinked}
+        </if>
+        <if test="openid != null">
+            and openid = #{openid}
+        </if>
+        <if test="wechatLinked != null">
+            and wechat_linked = #{wechatLinked}
+        </if>
+        <if test="intro != null and intro != ''">
+            and intro = #{intro}
+        </if>
+        <if test="locked != null">
+            and locked = #{locked}
+        </if>
+        <if test="deleted != null">
+            and deleted = #{deleted}
+        </if>
+        <if test="createTime != null">
+            and create_time = #{createTime}
+        </if>
+        <if test="updateTime != null">
+            and update_time = #{updateTime}
+        </if>
+        <if test="deletedTime != null">
+            and deleted_time = #{deletedTime}
+        </if>
+        <if test="payload != null and payload != ''">
+            and payload = #{payload}
+        </if>
+    </sql>
+
+    <!--多条件查询的条件-->
+    <sql id="entityQueryCondition">
+        <if test="user.id != null">
+            and id = #{user.id}
+        </if>
+
+        <if test="user.username != null and user.username != ''">
+            and username = #{user.username}
+        </if>
+        <if test="user.password != null and user.password != ''">
+            and password = #{user.password}
+        </if>
+        <if test="user.avatar != null and user.avatar != ''">
+            and avatar = #{user.avatar}
+        </if>
+        <if test="user.name != null and user.name != ''">
+            and name = #{user.name}
+        </if>
+        <if test="user.age != null">
+            and age = #{user.age}
+        </if>
+        <if test="user.gender != null and user.gender != ''">
+            and gender = #{user.gender}
+        </if>
+        <if test="user.phone != null and user.phone != ''">
+            and phone = #{user.phone}
+        </if>
+        <if test="user.phoneLinked != null">
+            and phone_linked = #{user.phoneLinked}
+        </if>
+        <if test="user.openid != null">
+            and openid = #{user.openid}
+        </if>
+        <if test="user.wechatLinked != null">
+            and wechat_linked = #{user.wechatLinked}
+        </if>
+        <if test="user.intro != null and user.intro != ''">
+            and intro = #{user.intro}
+        </if>
+        <if test="user.locked != null">
+            and locked = #{user.locked}
+        </if>
+        <if test="user.deleted != null">
+            and deleted = #{user.deleted}
+        </if>
+        <if test="user.createTime != null">
+            and create_time = #{user.createTime}
+        </if>
+        <if test="user.updateTime != null">
+            and update_time = #{user.updateTime}
+        </if>
+        <if test="user.deletedTime != null">
+            and deleted_time = #{user.deletedTime}
+        </if>
+        <if test="user.payload != null and user.payload != ''">
+            and payload = #{user.payload}
+        </if>
+    </sql>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserMap">
+        select
+        <include refid="allColumn"></include>
+        from user
+        <where>
+            id = #{id}
+        </where>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryUsers" resultMap="UserMap">
+        select
+        <include refid="allColumn"></include>
+        from user
+        <trim prefix="where" prefixOverrides="and" suffixOverrides=",">
+            <if test="offset == null and pageSize == null ">
+                <include refid="queryCondition"></include>
+            </if>
+            <if test="offset != null and pageSize != null ">
+                <include refid="entityQueryCondition"></include>
+            </if>
+        </trim>
+        <include refid="pageConfig"></include>
+    </select>
+
+    <!--条件查询单个元素-->
+    <select id="queryUser" resultMap="UserMap">
+        select
+        <include refid="allColumn"></include>
+        from user
+        <trim prefix="where" prefixOverrides="and" suffixOverrides=",">
+            <include refid="queryCondition"></include>
+        </trim>
+    </select>
+
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="avatar != null and avatar != ''">
+                and avatar = #{avatar}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="age != null">
+                and age = #{age}
+            </if>
+            <if test="gender != null and gender != ''">
+                and gender = #{gender}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="phoneLinked != null">
+                and phone_linked = #{phoneLinked}
+            </if>
+            <if test="openid != null">
+                and openid = #{openid}
+            </if>
+            <if test="wechatLinked != null">
+                and wechat_linked = #{wechatLinked}
+            </if>
+            <if test="intro != null and intro != ''">
+                and intro = #{intro}
+            </if>
+            <if test="locked != null">
+                and locked = #{locked}
+            </if>
+            <if test="deleted != null">
+                and deleted = #{deleted}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="deletedTime != null">
+                and deleted_time = #{deletedTime}
+            </if>
+            <if test="payload != null and payload != ''">
+                and payload = #{payload}
+            </if>
+        </where>
+    </select>
+
+
+
+    <!--通过主键修改数据,不使用动态`where标签`的原因：防止主键不传参，直接对全表数据进行写操作-->
+    <update id="update">
+        update user
+        <set>
+            <include refid="commonsValue"></include>
+        </set>
+        where id = #{id} limit 1
+    </update>
+
+    <!--通过主键删除,不使用动态`where标签`的原因：防止主键不传参，直接对全表数据进行写操作-->
+    <delete id="deleteById">
+        delete
+        from user
+        where id = #{id} limit 1
+    </delete>
+
+
+    <!--通过实体类删除,不使用动态`where标签`的原因：防止主键不传参，直接对全表数据进行写操作-->
+    <delete id="deleteByUser">
+        delete
+        from user
+        where
+        <trim prefix="" prefixOverrides="and" suffixOverrides=",">
+            <include refid="queryCondition"></include>
+        </trim>
+    </delete>
+
+    <!--通过主键逻辑删除-->
+    <delete id="logicDeleteById">
+        update user
+        <set>
+            deleted=1
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </delete>
+
+
+    <!--新增user:哪个字段不为空就添加哪列数据,返回自增主键-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="insertColumn"/>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <include refid="insertValue"/>
+        </trim>
+    </insert>
+
+    <!--批量插入-->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into user(username, password, avatar, name, age, gender, phone, phone_linked, openid, wechat_linked,
+        intro, locked, deleted, create_time, update_time, deleted_time, payload)
+        values
+        <foreach collection="users" item="user" separator=",">
+            (#{user.username}, #{user.password}, #{user.avatar}, #{user.name}, #{user.age}, #{user.gender},
+            #{user.phone}, #{user.phoneLinked}, #{user.openid}, #{user.wechatLinked}, #{user.intro}, #{user.locked},
+            #{user.deleted}, #{user.createTime}, #{user.updateTime}, #{user.deletedTime}, #{user.payload})
+        </foreach>
+    </insert>
+
+    <!--批量插入或更新-->
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into user(id,username, password, avatar, name, age, gender, phone, phone_linked, openid, wechat_linked,
+        intro, locked, deleted, create_time, update_time, deleted_time, payload)
+        values
+        <foreach collection="users" item="user" separator=",">
+            (#{user.id},#{user.username}, #{user.password}, #{user.avatar}, #{user.name}, #{user.age}, #{user.gender},
+            #{user.phone}, #{user.phoneLinked}, #{user.openid}, #{user.wechatLinked}, #{user.intro}, #{user.locked},
+            #{user.deleted}, #{user.createTime}, #{user.updateTime}, #{user.deletedTime}, #{user.payload})
+        </foreach>
+        on duplicate key update
+        username = values(username),
+        password = values(password),
+        avatar = values(avatar),
+        name = values(name),
+        age = values(age),
+        gender = values(gender),
+        phone = values(phone),
+        phone_linked = values(phone_linked),
+        openid = values(openid),
+        wechat_linked = values(wechat_linked),
+        intro = values(intro),
+        locked = values(locked),
+        deleted = values(deleted),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        deleted_time = values(deleted_time),
+        payload = values(payload)
+    </insert>
+
+</mapper>
+

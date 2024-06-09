@@ -14,4 +14,46 @@ Here are some ideas to get you started:
 - 😄 Pronouns: ...
 - ⚡ Fun fact: ...
 -->
-啊啊啊啊啊啊啊啊啊啊
+
+# Tree3Life
+
+## 简介
+
+本项目是一个 用于整合个人编程思维结构的\`聚合项目\`，不以业务为参照，仅记录个人对编程模块的构思及实现。
+
+## 项目所用技术
+
+- 前端
+  - React、Redux、Router、AntD UI、
+- 后端
+  - Springboot
+  - MySQL 
+  - Redis
+  - RabbitMQ
+  - elasticsearch
+  - Netty(v4)
+- 协议
+  - http协议
+  - websocket
+  - mqtt协议?(ensure?)
+
+## 项目模块
+
+总体划分为3个模块
+
+### 一、聊天模块
+
+
+
+### 二、检索模块
+
+使用elasticsearch实现
+
+
+
+### 三、权限模块
+
+
+
+### 四、支付、文件上传
+

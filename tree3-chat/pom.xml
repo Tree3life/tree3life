@@ -17,12 +17,77 @@
     </properties>
 
     <dependencies>
+        <!--todo 考虑引入common还是tree3-webcore-->
+        <!--todo 猜测 引入common ,固定网络地址，不走网关,同时网关中应当排除对`聊天映射标记（例如tree3Chat）`所作的映射操作
+        地址规定：协议://ip:端口号/聊天映射标记
+        例如：http://localhost:9999/tree3Chat-->
         <dependency>
             <groupId>com.tree3.life</groupId>
-            <artifactId>tree3-webcore</artifactId>
+            <artifactId>tree3-commons</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.tree3.life</groupId>-->
+        <!--            <artifactId>tree3-webcore</artifactId>-->
+        <!--            <version>1.0-SNAPSHOT</version>-->
+        <!--        </dependency>-->
+
+        <!--引入netty-->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
         </dependency>
 
+        <!--spring-cloud-stater-openfeign-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+
+        <!--mybatis-->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+        </dependency>
+        <!--mysql-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!--druid-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+        </dependency>
+
+        <!--spring-boot-starter-redis-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!--引入mq-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <!--项目结束时放开此处注释或项目出错时记得检查此处！！！！！！-->
+            <scope>provided</scope>
+            <!--<scope>compile</scope>-->
+            <!--<scope>runtime</scope>-->
+        </dependency>
     </dependencies>
 
 </project>
