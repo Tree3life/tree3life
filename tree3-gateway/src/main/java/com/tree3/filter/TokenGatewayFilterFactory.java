@@ -1,6 +1,6 @@
 package com.tree3.filter;
 
-import com.tree3.constants.RedisPrefix;
+import com.tree3.constants.RedisConstance;
 import com.tree3.exception.IllegalTokenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ public class TokenGatewayFilterFactory extends AbstractGatewayFilterFactory<Toke
                     String token = queryParams.get("token").get(0);
                     log.info("token:{}", token);
                     //2.根据token信息去redis获取
-                    if (!redisTemplate.hasKey(RedisPrefix.TOKEN_KEY + token))
+                    if (!redisTemplate.hasKey(RedisConstance.TOKEN_KEY + token))
                         throw new IllegalTokenException("不合法的令牌!");
                 }
                 return chain.filter(exchange);

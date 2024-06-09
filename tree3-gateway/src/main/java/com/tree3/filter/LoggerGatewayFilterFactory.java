@@ -1,8 +1,6 @@
 package com.tree3.filter;
 
 import cn.hutool.json.JSONUtil;
-import com.tree3.constants.RedisPrefix;
-import com.tree3.exception.IllegalTokenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +43,7 @@ public class LoggerGatewayFilterFactory extends AbstractGatewayFilterFactory<Log
             public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
                 log.debug("config required token: {}", config.requiredLog);
                 log.debug("config name: {}", config.name);
-                System.out.println("日志记录");
+                log.debug("日志记录");
                 if (config.requiredLog) {
                     ServerHttpRequest request = exchange.getRequest();
                     HttpHeaders headers = request.getHeaders();
