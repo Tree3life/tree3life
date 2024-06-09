@@ -102,9 +102,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = RuntimeException.class)
     public Object handleRuntimeException(RuntimeException e) {
-        System.out.println("捕获所有运行时异常");
+        e.printStackTrace();
+        log.error("捕获所有运行时异常：{}", e.getMessage());
 //        loggingCaseInfo(e, "运行时异常");
-        return ResponseResultHelper.fail(HttpStatus.NO_CONTENT,BusinessResponseCode.UNKNOWN_EXCEPTION,e.getMessage());
+        return ResponseResultHelper.fail(HttpStatus.NO_CONTENT, BusinessResponseCode.UNKNOWN_EXCEPTION, e.getMessage());
     }
 
 
