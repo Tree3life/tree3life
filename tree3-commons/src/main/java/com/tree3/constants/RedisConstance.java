@@ -16,5 +16,6 @@ public interface RedisConstance {
     String VIDEO_LIKE_COUNT_PREFIX = APPLICATION_NAME + "VIDEO_LIKE_COUNT_";//用户喜欢视频数量前缀
     String VIDEO_PLAYED_COUNT_PREFIX = APPLICATION_NAME + "VIDEO_PLAYED_COUNT_";//视频播放次数前缀
     String CHAT_HISTORY = APPLICATION_NAME + "CHAT_HISTORY";
+    String RabbitMQ_MSGID = APPLICATION_NAME + "RabbitMQ_MSGID";
 }
 

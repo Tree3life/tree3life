@@ -1,11 +1,12 @@
 package com.tree3.controller;
 
-import com.tree3.config.RabbitMQProducerConfig;
+import com.tree3.constants.RedisConstance;
 import com.tree3.exception.BusinessException;
 import com.tree3.service.TestThreadPoolService;
+import com.tree3.utils.RedisUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.MessageDeliveryMode;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+
+import static com.tree3.config.RabbitMQProducerConfig.TREE3CHAT_QUEUE_SAVE$CHAT$HISTORY_WORK;
 
 /**
  * <p>
@@ -35,6 +38,9 @@ public class TestController {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private RedisUtils redisUtils;
+
     @GetMapping("aa")
     public String testMVC() {
         System.out.println("usersT do");
@@ -47,18 +53,25 @@ public class TestController {
         try {
             //将消息 msgTemp 发送到名为 EXCHANGE 的交换机，并使用路由键 "routerPath" 进行消息路由。根据交换机和队列的绑定关系，消息将被路由到与该路由键匹配的队列中，供消费者进行消费。
             String msgTemp = "mmmmmm";
-            for (int i = 0; i < 10; i++) {
-                rabbitTemplate.convertAndSend("", RabbitMQProducerConfig.TREE3CHAT_QUEUE_SAVE$CHAT$HISTORY_WORK, msgTemp + i, message -> {
-                    log.debug("MessagePostProcessor 消息发送以后。。。。。。。。。");
-                    /**
-                     * 设置消息持久化
-                     * MessageDeliveryMode.NON_PERSISTENT：非持久化。当消息被发送到 RabbitMQ 服务器后，如果服务器发生重启或崩溃，该消息可能会丢失。
-                     * MessageDeliveryMode.PERSISTENT：持久化消息。当消息被发送到 RabbitMQ 服务器后，会被持久化存储，即使服务器发生重启或崩溃，该消息也不会丢失。
-                     */
-                    message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
-                    return message;
-                });
-            }
+//            for (int i = 0; i < 10; i++) {
+//                rabbitTemplate.convertAndSend("", RabbitMQProducerConfig.TREE3CHAT_QUEUE_SAVE$CHAT$HISTORY_WORK, msgTemp + i, message -> {
+//                    log.debug("MessagePostProcessor 消息发送以后。。。。。。。。。");
+//                    /**
+//                     * 设置消息持久化
+//                     * MessageDeliveryMode.NON_PERSISTENT：非持久化。当消息被发送到 RabbitMQ 服务器后，如果服务器发生重启或崩溃，该消息可能会丢失。
+//                     * MessageDeliveryMode.PERSISTENT：持久化消息。当消息被发送到 RabbitMQ 服务器后，会被持久化存储，即使服务器发生重启或崩溃，该消息也不会丢失。
+//                     */
+//                    message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+//                    return message;
+//                });
+//            }
+
+
+            long msgIdentification = redisUtils.nextDistributedID(RedisConstance.RabbitMQ_MSGID);
+            rabbitTemplate.convertAndSend("", TREE3CHAT_QUEUE_SAVE$CHAT$HISTORY_WORK,
+                    "{\"content\":\"测试xxx\"}",
+                    new CorrelationData(msgIdentification + "")
+            );
         } catch (
                 Exception e) {
             e.printStackTrace();
