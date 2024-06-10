@@ -91,6 +91,9 @@ public class ResponseResultHelper implements Serializable {
     }
 
     /**
+     * optimized：使用泛型优化 ResponseEntity<泛型> (Rupert，2024/6/10 )
+     *  优化统一返回结果的封装，减少套娃层数（为feign调用时接收参数提供更好的体验）
+     *
      * @return 正常的响应结果
      */
     public static ResponseEntity<Object> success(Object data) {

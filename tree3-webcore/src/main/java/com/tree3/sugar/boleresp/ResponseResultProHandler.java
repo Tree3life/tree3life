@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -79,6 +78,8 @@ public class ResponseResultProHandler implements ResponseBodyAdvice<Object> {
             throw new BusinessException(BusinessResponseCode.MEANINGLESS_USE, "在返回值类型为ModelAndView的方法上使用@ResponseResult是无意义的！");
         }
 
+        // optimized：为返回结果使用泛型 确定具体的类型，而不是使用Object (Rupert，2024/6/11 )
+        //  解决feign调用时需要强转问题
         //进行数据封装
         return ResponseResultHelper.success(body);
     }

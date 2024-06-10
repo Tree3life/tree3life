@@ -1,3 +1,5 @@
+server:
+  port: 9207
 netty:
   ws:
     port: 9202
@@ -47,16 +49,6 @@ spring:
         #通过containerFactory.setPrefetchCount(1)即可启用fair 转发，达到能者多劳的效果
         #todo 查看源码确认——?PrefetchCount和prefetch是一个作用吗
         prefetch: 1 # 设置消费者的预取计数。表示在消费者处理完当前消息之前，不会从RabbitMQ服务器获取更多的消息。
-      # todo 测试：消费端 消息重试（通过配置在消费者的方法上如果执行失败或执行异常只需要抛出异常
-      #（一定要出现异常才会触发重试，注意：！！！不要捕获！！！异常） 即可实现消息重试，这样也可以保证消息的可靠性。）
-    #      direct:
-    #        retry:
-    #          enabled: true # 开启消费者失败重试机制
-    #          initial-interval: 5000ms # 初始失败等待时长为5秒
-    #          multiplier: 1  # 失败的等待时长倍数（下次等待时长 = multiplier * 上次等待时间）
-    #          max-attempts: 3 # 最大重试次数
-    #          stateless: true # true无状态；false有状态（如果业务中包含事务，这里改为false）
-    #endregion消息补偿机制的相关配置
 
 
 mybatis:
