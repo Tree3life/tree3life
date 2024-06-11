@@ -103,7 +103,7 @@ class Tree3Layout extends Component {
 
         let {windowWidth, windowHeight} = this.state;
         const headerStyle = {
-            backgroundColor: "black",
+            // backgroundColor: "black",
             height: windowHeight * 0.154,
             width: windowWidth,
             marginTop: windowHeight * 0.01,
@@ -169,7 +169,7 @@ class Tree3Layout extends Component {
                             {/*中间-右侧*/}
                         </Sider>
                     </Layout>
-                    <Footer id={"container-footer"} style={{backgroundColor: "red"}}>
+                    <Footer id={"container-footer"}>
                         {/*下面*/}
                         <h1>{windowWidth}</h1>
                         <h1>{windowHeight}</h1>

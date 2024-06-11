@@ -2,7 +2,7 @@ import './Tree3Header.css'
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom'
 
-import {Menu, Icon, Row, Col, Button} from 'antd';
+import {Menu, Icon, Row, Col, Button, Avatar} from 'antd';
 import {Input} from 'antd';
 
 const {SubMenu} = Menu;
@@ -36,7 +36,7 @@ class Tree3Header extends Component {
     render() {
         const {parentStyle} = this.props
         const menuStyle = {
-            backgroundColor: "red",
+            // backgroundColor: "red",
             height: parentStyle.height * 0.4,
             width: parentStyle.width * 0.8,
         };
@@ -49,45 +49,48 @@ class Tree3Header extends Component {
             <>
                 {/*todo redux 中监听属性 窗口的宽度、高度*/}
                 {/*region 导航栏*/}
-                <Menu onClick={this.handleClick} style={menuStyle} selectedKeys={[this.state.current]}
+                <Menu id={"header-menu"} onClick={this.handleClick} style={menuStyle}
+                      selectedKeys={[this.state.current]}
                       mode="horizontal">
+
+                    <Menu.Item disabled={true} key="tree3-head-logo">
+                        <Avatar src={"http://md.tree3.life/favor/favicon.svg"}  size="large" icon="user" />
+                    </Menu.Item>
 
                     <Menu.Item key="mail">
                         <Icon type="mail"/>
-                        Navigation One
+                        博客检索
                     </Menu.Item>
                     <Menu.Item key="chatroomMenu">
                         <Icon type="usergroup-add"/>
                         聊天室
                     </Menu.Item>
-                    <Menu.Item key="app" disabled>
-                        <Icon type="appstore"/>
-                        Navigation Two
-                    </Menu.Item>
+                    {/*<Menu.Item key="app" disabled>*/}
+                    {/*    <Icon type="appstore"/>*/}
+                    {/*    Navigation Two*/}
+                    {/*</Menu.Item>*/}
 
-                    <SubMenu
-                        title={
-                            <span className="submenu-title-wrapper"> <Icon type="setting"/>
-                            Navigation Three - Submenu
-                        </span>
-                        }>
-                        <Menu.ItemGroup title="Item 1">
-                            <Menu.Item key="setting:1">Option 1</Menu.Item>
-                            <Menu.Item key="setting:2">Option 2</Menu.Item>
-                        </Menu.ItemGroup>
-                        <Menu.ItemGroup title="Item 2">
-                            <Menu.Item key="setting:3">Option 3</Menu.Item>
-                            <Menu.Item key="setting:4">Option 4</Menu.Item>
-                        </Menu.ItemGroup>
-                    </SubMenu>
+                    {/*<SubMenu*/}
+                    {/*    title={*/}
+                    {/*        <span className="submenu-title-wrapper"> <Icon type="setting"/>*/}
+                    {/*        Navigation Three - Submenu*/}
+                    {/*    </span>*/}
+                    {/*    }>*/}
+                    {/*    <Menu.ItemGroup title="Item 1">*/}
+                    {/*        <Menu.Item key="setting:1">Option 1</Menu.Item>*/}
+                    {/*        <Menu.Item key="setting:2">Option 2</Menu.Item>*/}
+                    {/*    </Menu.ItemGroup>*/}
+                    {/*    <Menu.ItemGroup title="Item 2">*/}
+                    {/*        <Menu.Item key="setting:3">Option 3</Menu.Item>*/}
+                    {/*        <Menu.Item key="setting:4">Option 4</Menu.Item>*/}
+                    {/*    </Menu.ItemGroup>*/}
+                    {/*</SubMenu>*/}
 
                     <Menu.Item key="alipay">
                         <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
-                            Navigation Four - Link
+                            聚合支付
                         </a>
                     </Menu.Item>
-
-
                 </Menu>
                 {/*endregion 导航栏*/}
 
@@ -95,7 +98,7 @@ class Tree3Header extends Component {
                 <div style={searchDivStyle}>
                     <Row type="flex" justify="space-around" align="top">
                         <Col span={3} style={{backgroundColor: "white"}}>
-                            tree3Life logo
+                            <h2>Tree 3 Life</h2>
                         </Col>
                         <Col span={18}>
                             <Search

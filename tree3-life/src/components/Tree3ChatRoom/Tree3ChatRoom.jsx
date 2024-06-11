@@ -717,7 +717,7 @@ class ChatMain extends React.Component {
                 </div>
 
                 <div id="funcWindow">表情、文件</div>
-                <textarea rows={6} placeholder={"输入框aaaaaaaaaa"} ref={this.textAreaRef} id="inputWindow">
+                <textarea rows={6} placeholder={"输入..."} ref={this.textAreaRef} id="inputWindow">
 
                </textarea>
                 {/*<input placeholder={"输入框aaaaaaaaaa"} type={"text"}/>*/}

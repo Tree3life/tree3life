@@ -4,12 +4,18 @@
 #container .ant-modal-footer button:nth-child(1) {
   display: none;
 }
+#container #container-footer {
+  background-color: #fafffe;
+}
 #container-sider-left,
 #container-sider-right {
-  background-color: #D1DEE9;
+  background-color: #d6dfd3;
   width: 100%;
 }
 #container-head {
+  background-color: #fafffe;
+}
+#container-head #header-menu {
   background-color: #fafffe;
 }
 /*# sourceMappingURL=Tree3Layout.css.map */
