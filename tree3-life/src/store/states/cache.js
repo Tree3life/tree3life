@@ -35,6 +35,8 @@ const initState = {
         locked: true,
     },
     websocket: undefined,
+    //设置主动关闭连接的标识的方法
+    setDoDisconnect:undefined
 }
 
 // const {cache: {userInfo: {id: userId}, token}} = this.props;

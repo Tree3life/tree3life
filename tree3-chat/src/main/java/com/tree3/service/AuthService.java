@@ -28,4 +28,18 @@ public interface AuthService {
      */
     boolean logout(ChannelHandlerContext username, TextWebSocketFrame password);
 
+    /**
+     * @param context
+     * @param frame
+     */
+    void handlePing(ChannelHandlerContext context, TextWebSocketFrame frame);
+
+    /**
+     * 将心跳的职责交割客户端维护，即 由客户端定时Ping，服务器不主动发送Ping消息，
+     * 由此 从以上职责的划分来讲，服务端是不需要处理Pong消息的
+     *
+     * @param context
+     * @param frame
+     */
+    void handlePong(ChannelHandlerContext context, TextWebSocketFrame frame);
 }

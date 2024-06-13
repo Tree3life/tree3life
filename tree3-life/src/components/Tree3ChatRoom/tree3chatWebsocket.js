@@ -17,19 +17,48 @@ import {nanoid} from "nanoid";
 import settings from "@/resources/application";
 import beanFactory from "@/resources/factory";
 import history from "@/util/history";
+import dayjs from "dayjs";
 
 
 // import settings from "@/resources/application";
 //功能区
-export const funMenu = {friends: 'friendList', groups: 'groupList',findFriends:'findFriends'}
+export const funMenu = {friends: 'friendList', groups: 'groupList', findFriends: 'findFriends'}
 export const defaultAvatar = "https://tree3.oss-cn-hangzhou.aliyuncs.com/favor/caticonO.png"
 export const serverId = -1;//在用户表中代表服务器对象的id
 export const clientId = -999;//在用户表中代表客户端对象的id
+/**
+ * idleDetectionInterval空闲检测的间隔事件设置为： 5分钟（300秒 ,300000毫秒 ）
+ * heartbeatInterval 前端心跳包的发送间隔设置为：2分钟（120000毫秒 ）
+ * reconnectIntervalTimeout自动重连的间隔设置为：1分钟（60000毫秒 ）
+ */
+export const idleDetectionInterval = 300000;
+// export const heartbeatInterval = 120000;
+export const heartbeatInterval = 10000;
+export const reconnectIntervalTimeout = 60000;
 export const chatInitInfo = {
     websocket: undefined,
+    /**
+     * 最新的接收到的消息 的时间戳
+     * 每次接收到新消息都应当去主动更新本字段，有助于减少心跳检测的流量
+     * （不更新也没什么坏影响）
+     * @type {number}
+     */
+    lastReceiveMsgTime: -1,
+    /**
+     * 最新的发送的消息 的时间戳
+     * 每次发送新消息后都应当去主动更新本字段，有助于减少心跳检测的流量
+     * （不更新也没什么坏影响）
+     * @type {number}
+     */
+    lastSendMsgTime: -1,
+    /**
+     * doDisconnect: true,主动断开连接
+     * doDisconnect: false,异常断开连接
+     *
+     */
+    doDisconnect: false,
     selectedMenu: funMenu.friends,//联系人集合:friends/groups
     userId: '',//当前用户的id
-
     token: undefined,
     currentSession: {//currentSession 当前的聊天对象
         contactor: {historyRefreshed: false,},//聊天对象 群聊Obj或朋友Obj(        historyInfo: [],//与当前聊天对象的 聊天消息
@@ -43,7 +72,7 @@ export const chatInitInfo = {
             avatar: defaultAvatar,//头像
             lastMsg: '最近的一条消息简略',//最近的一条消息简略
             lastTime: '发送时间',//最近消息的发送时间
-            countUnread:[],
+            countUnread: [],
             historyRefreshed: false,//本次连接过程中是否已经 查询过 双方的聊天记录
             histories: [//聊天历史，按时间的升序进行排列
                 {
@@ -64,7 +93,7 @@ export const chatInitInfo = {
             avatar: defaultAvatar,//头像
             lastMsg: '最近的一条消息简略',//最近的一条消息简略
             lastTime: '发送时间',//最近消息的发送时间
-            countUnread:[],
+            countUnread: [],
             historyRefreshed: false,//本次连接过程中是否已经 查询过 双方的聊天记录
             histories: [//聊天历史，按时间的升序进行排列
                 {
@@ -88,7 +117,7 @@ export const chatInitInfo = {
             avatar: defaultAvatar,//头像
             lastMsg: '最近的一条消息简略',//最近的一条消息简略
             lastTime: '发送时间',//最近消息的发送时间
-            countUnread:[],
+            countUnread: [],
             histories: [//聊天历史，按时间的升序进行排列
                 {
                     id: '', command: 1, state: '',
@@ -109,7 +138,7 @@ export const chatInitInfo = {
             avatar: defaultAvatar,//头像
             lastMsg: '最近的一条消息简略',//最近的一条消息简略
             lastTime: '发送时间',//最近消息的发送时间
-            countUnread:[],
+            countUnread: [],
             histories: [//聊天历史，按时间的升序进行排列
                 {
                     id: '', command: 1, state: '',
@@ -125,6 +154,16 @@ export const chatInitInfo = {
         },
     ],
 };
+/**
+ * ping定时任务
+ * @type {undefined}
+ */
+export let pingInterval = undefined;
+/**
+ * 自动重连 定时任务
+ * @type {undefined}
+ */
+export let reconnectInterval = undefined;
 
 
 //region  2.处理 websocket 服务器 发来的消息
@@ -142,6 +181,10 @@ export function dispatchMessage(event) {
     const {currentSession, friendList: frdList} = this.state
 
     switch (cmdType) {
+        case commandType.Pong:
+            // debug@Rupert：对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/6/13 21:49)
+            console.log("Pongggaaaaaa：",dataObj)
+            break;
         case commandType.ResponseLogin:
             // to be optimized@Rupert：优化此处的逻辑，优先使用本地缓存的数据 (2024/5/29 11:55)
 
@@ -153,7 +196,7 @@ export function dispatchMessage(event) {
                 let {friend, lastHistory} = item;
                 return {
                     id: friend.id,
-                    title: friend.remarkName?friend.remarkName:friend.username,//用户名、群名
+                    title: friend.remarkName ? friend.remarkName : friend.username,//用户名、群名
                     username: friend.username,//用户名、群名
                     remarkName: friend.remarkName,//备注
                     avatar: friend.avatar ? friend.avatar : defaultAvatar,//头像
@@ -177,7 +220,7 @@ export function dispatchMessage(event) {
                     avatar: item.avatar ? item.avatar : defaultAvatar,//头像
                     lastMsg: lastHistory ? lastHistory.content : '',//最近的一条消息简略
                     lastTime: lastHistory ? lastHistory.createTime : '',//最近消息的发送时间
-                    countUnread:[],
+                    countUnread: [],
                     history: [],
                     historyRefreshed: false
                 };
@@ -262,15 +305,22 @@ export function websocketOnOpen(websocket) {
             token
         );
 
-        //建立连接成功之后，发送注册消息，通知服务器将用户名和channel进行绑定
-        //将event和websocket传给 处理消息的函数
         if (!websocket) {
             message.warn(settings.str_message.WebSocketFail);
             return;
         }
 
 
+        //建立连接成功之后，发送注册消息，通知服务器将用户名和channel进行绑定
+        //将event和websocket传给 处理消息的函数
         websocket.send(JSON.stringify(frame));
+
+        //初始化 最新的消息时间
+        const now = dayjs();
+        this.setState({lastReceiveMsgTime: now, lastSendMsgTime: now}, () => {
+            //开启心跳检测
+            startHeartBeat(websocket, userId, this)();
+        })
     }
 }
 
@@ -278,7 +328,26 @@ export function websocketOnOpen(websocket) {
 
 //region  3.处理 websocket 断开事件
 export function websocketOnClose(event) {
+    //非主动退出，自动重连
+    if (!this.state.doDisconnect) {
+        const element = this;
+        reConnect(element)();
+        return;
+    }
+
+    //主动退出
+    //1. 清除旧的连接
+    // to be optimized@Rupert：这里表明 本项目中的websocket 设计上存在不合理的地方，
+    //  后续需要对state/redux-cache/context 设计进行优化 (2024/6/13 16:25)
+    //1.1 清除state&context中的websocket对象
+    this.setState({websocket: undefined});
+    //1.2 清除redux-cache中的websocket对象
+    this.props.saveInLocalCache({websocket: undefined});
+    //停止心跳检测
+    clearInterval(pingInterval);
     message.warn(settings.str_message.WebSocketOnClose);
+    return;
+
 }
 
 //endregion  3.处理 websocket 断开事件
@@ -292,7 +361,7 @@ export function sendMessage(messageObj) {
 
     const {websocket} = this.state
     if (!websocket) {
-        message.warn(settings.str_message.WebSocketFail);
+        message.warn(settings.str_message.WebSocketOnDisconnect);
         return;
     }
 
@@ -308,3 +377,76 @@ export function sendMessage(messageObj) {
 }
 
 //endregion 4 向websocket服务器发送消息
+
+
+//region 5 心跳检测
+/**
+ * 开启心跳检测
+ * 1. 客户端建立WebSocket连接。
+ * 2. 客户端向服务器发送心跳数据包，服务器接收并返回一个表示接收到心跳数据包的响应。
+ * 3. 当服务器没有及时接收到客户端发送的心跳数据包时，服务器会 发送一个关闭连接的请求。
+ * 4. 服务器定时向客户端发送心跳数据包，客户端接收并返回一个表示接收到心跳数据包的响应。
+ * 5. 当客户端没有及时接收到服务器发送的心跳数据包时，客户端会重新连接WebSocket
+ * @param websocket
+ * @returns {(function(*): void)|*}
+ */
+export function startHeartBeat(ws, userId, elementThis) {
+    return () => {
+        clearInterval(pingInterval);
+        //周期性发送心跳包
+        pingInterval = setInterval(() => {
+            const now = dayjs()
+            if (ws.readyState == WebSocket.CLOSING || ws.readyState == WebSocket.CLOSED) {
+                console.log("聊天服务器已断开....)");
+                clearInterval(pingInterval);
+                return;
+            }
+
+            // 减小流量/不必要的ping ，检查最近的一条消息的发送时间，如果间隔较小，就不发送心跳包
+            // fixme 心跳流量控制@Rupert：检查最近的一条消息的发送时间，如果间隔较小，就不发送心跳包 (2024/6/13 18:52)
+            let nextSendMsgTime = dayjs(elementThis.state.lastSendMsgTime).add(heartbeatInterval / 3, 'millisecond')
+            let timeFlag = dayjs(now).isBefore(nextSendMsgTime);
+            if (timeFlag) {
+                console.log("未发送的pinggggg：{}", elementThis.state.lastSendMsgTime, now, nextSendMsgTime)
+                return;
+            }
+            let ping = beanFactory.createPingMessage(userId);
+            // console.log("发送的pinggggg：{}", elementThis.state.lastSendMsgTime, now, nextSendMsgTime)
+            ws.send(JSON.stringify(ping))
+            elementThis.setState({lastSendMsgTime: now});
+        }, heartbeatInterval);
+    }
+}
+
+//endregion 5 心跳检测
+
+//region 6 重连尝试
+/**
+ * 重连机制
+ * 1. 前端`监听WebSocket的onclose()事件`，重新创建WebSocket连接。
+ 2. 使用WebSocket插件或库，例如Sockjs、Stompjs等。
+ 3. 使用心跳机制检测WebSocket连接状态，自动重连。
+ 4. 使用断线重连插件或库，例如ReconnectingWebSocket等。
+ * @param data
+ */
+export function reConnect(elementThis) {
+    return () => {
+        //1. fixme@Rupert： 如果不是主动断开 && 最后一次消息的接收时间/发送时间+心跳间隔时间 < now() ，则判定为已经和服务器断开连接；
+        if (!elementThis.state.doDisconnect
+            // && (
+            //     ((elementThis.state.lastSendMsgTime + heartbeatInterval) < now())//最后一次发送消息 超时（说明Ping出现了问题）
+            //     || ((elementThis.state.lastReceiveMsgTime + heartbeatInterval) < now())//最后一次接收消息 超时（Pong出现了问题）
+            // )
+        ) {
+            //3. 主动重连服务器
+            reconnectInterval = setInterval(() => {
+                elementThis.initWebsocket(settings.websocket_url);
+            }, reconnectIntervalTimeout);
+        }
+    }
+}
+
+//endregion 6 重连尝试
+
+
+

@@ -31,6 +31,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -158,5 +159,21 @@ public class AuthServiceImpl implements AuthService {
         ctx.channel().close();
         log.error("{}", message);
         return false;
+    }
+
+    @Override
+    public void handlePing(ChannelHandlerContext context, TextWebSocketFrame frame) {
+        MessageText msg = JSONUtils.paresToObj(frame.text(), MessageText.class);
+        // 1.向session的中对应的channel中记录本次Ping的时间（供消息发送时做参考，若长时间未收到Ping消息，则认为客户端已关闭，走离线消息逻辑）
+        session.setAttribute(context.channel(), "lastPingTime", LocalDateTime.now());
+        // {"id":"2-XEtu","createTime":"2024-06-13T13:43:09.012Z","commandType":3,"from":1}
+        // 向客户端写回Pong消息，客户端需要维护一个 接收Pong消息的字段 lastReciveTime
+        context.channel().writeAndFlush(ResponseHelperWebSocket.success(Command.Pong, msg.getFrom(), ""));
+        log.debug("收到的ping消息:" + frame);
+    }
+
+    @Override
+    public void handlePong(ChannelHandlerContext context, TextWebSocketFrame frame) {
+        System.out.println("pong:" + frame);
     }
 }

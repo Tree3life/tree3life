@@ -22,6 +22,7 @@ public class MessageText extends MessageHead {
 
     private static final long serialVersionUID = 827966767228404102L;
 
+//    private Integer id;
 
     /**
      * 消息内容

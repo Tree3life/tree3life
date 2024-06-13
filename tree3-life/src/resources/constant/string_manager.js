@@ -5,6 +5,7 @@ const str_mange = {
     WebSocketSuccess: "成功与websocket服务器建立连接...",
     WebSocketFail: "未能成功与websocket服务器建立连接...",
     WebSocketOnClose: '已断开和websocket服务器的连接...',
+    WebSocketOnDisconnect: '当前处于断开状态...',
     WebSocketParseMessageError: "消息解析失败",
     WebSocketUnsupportedMessageTypes: "不支持的消息类型",
     NONE_TOKEN: "令牌失效，请重新登录！",

@@ -1,4 +1,6 @@
 import settings from '@/resources/application'
+import {nanoid} from "nanoid";
+import {commandType} from "@/resources/constant/tree3chat";
 
 /**
  * 个人信息
@@ -55,7 +57,6 @@ function creatGroup(id, name) {
  |---------------------  | ----------------------------------------------------|
  |contentType 消息体类型 int| content  消息体 Object  由具体Message类决定是否实现      |
  | --------------------- | ----------------------------------------------------|
- * todo 后续添加具体消息类型的工厂方法
  * @param commandType
  * @param from
  * @param to
@@ -65,8 +66,6 @@ function creatGroup(id, name) {
  */
 function createMessage(commandType, from, to, content, payload) {
     var message = {};
-    //todo 由后端创建
-    // message.id = undefined;
     message.createTime = new Date();
     // message.messageType = msgType;
     message.commandType = commandType;
@@ -84,10 +83,22 @@ function createMessage(commandType, from, to, content, payload) {
     return message;
 }
 
+function createPingMessage(from) {
+    return {
+        // id: nanoid(6),
+        createTime: new Date(), commandType: commandType.Ping, from: from};
+}
+
+function createPongMessage(pingId, from) {
+    return {id: pingId, createTime: new Date(), commandType: commandType.Pong, from: from};
+}
+
 let beanFactory = {
     createMessage,
     creatFriend,
     creatGroup,
     creatUser,
+    createPingMessage,
+    createPongMessage
 };
 export default beanFactory

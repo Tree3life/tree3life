@@ -4,6 +4,7 @@ import {withRouter} from 'react-router-dom'
 
 import {Menu, Icon, Row, Col, Button, Avatar} from 'antd';
 import {Input} from 'antd';
+import settings from "@/resources/application";
 
 const {SubMenu} = Menu;
 const {Search} = Input;
@@ -47,7 +48,7 @@ class Tree3Header extends Component {
         };
         return (
             <>
-                {/*todo redux 中监听属性 窗口的宽度、高度*/}
+                {/* redux 中监听属性 窗口的宽度、高度*/}
                 {/*region 导航栏*/}
                 <Menu id={"header-menu"} onClick={this.handleClick} style={menuStyle}
                       selectedKeys={[this.state.current]}

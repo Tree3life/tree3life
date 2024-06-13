@@ -140,7 +140,7 @@
     .box .content {
         width: 100vw;
         height: 100vh;
-        /* href="%PUBLIC_URL%/logo192.png"*/
+        /* href="%PUBLIC_URL%/leaf.png"*/
         /*background: url("./public/asset/login_bg_phone.png") no-repeat;*/
         background: url("@/resources/static/asset/login_bg_phone.png") no-repeat;
         background-size: 100% 100%;

@@ -20,6 +20,8 @@ public enum Command {
     Connect(1),
     DisConnect(-1),
     Login(2),
+    Ping(3),
+    Pong(4),
     /**
      * 退出
      */

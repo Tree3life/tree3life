@@ -27,6 +27,8 @@ export const commandType = {
     DisConnect: -1,
     Login: 2,
     Logout: -2,
+    Ping: 3,
+    Pong: 4,
     //endregion会话相关
     //region 私聊相关 10-99
     PrivateChatCorrelation: 10,//私聊相关

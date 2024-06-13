@@ -30,6 +30,12 @@ public class AuthDispatcher {
             case Logout:
                 authService.logout(context, frame);
                 break;
+            case Ping:
+                authService.handlePing(context, frame);
+                break;
+            case Pong:
+                authService.handlePong(context, frame);
+                break;
             default:
                 throw new BusinessException("不支持的单聊命令:" + frame.text());
         }

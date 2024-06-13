@@ -31,7 +31,7 @@ import {
     websocketOnOpen,
     websocketOnClose,
     sendMessage,
-    defaultAvatar, clientId,
+    defaultAvatar, clientId, startHeartBeat, reconnectInterval, pingInterval,
 } from "@/components/Tree3ChatRoom/tree3chatWebsocket";
 import {saveInLocalCache} from "@/store/states/cache";
 import Search from "antd/es/input/Search";
@@ -76,9 +76,6 @@ class FindUser extends React.Component {
     };
     searchFriends = async () => {
         let resp = await userApi.searchUsers({username: "张胜男"});
-        // debug@Rupert：对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/6/6 15:32)
-        console.log("rerrrrrrr：", resp);
-        console.log("找朋友：")
     }
     fetchMoreMatchedUsersData = () => {
         if (this.state.matchedUsers.length >= 500) {
@@ -189,15 +186,36 @@ class Tree3ChatRoom extends PureComponent {
         }
     }
 
+    componentWillUnmount() {
+        // todo@Rupert：断开与服务器的连接 (2024/5/28 18:06)
+        // debug@Rupert：对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/6/13 17:19)
+        if (this.state.websocket) {
+            this.websocket.terminate()
+        }
+        if (reconnectInterval) {
+            clearInterval(reconnectInterval);
+        }
+        if (pingInterval) {
+            clearInterval(pingInterval);
+        }
+    }
+
     componentDidMount() {
         this.initWebsocket(settings.websocket_url);
     }
 
-    componentWillUnmount() {
-        // todo@Rupert：断开与服务器的连接 (2024/5/28 18:06)
-    }
+    un
+
 
     initWebsocket = (address) => {
+        //防止自动重连时，重复建立连接
+        if (this.state.websocket) {
+            if (reconnectInterval) {
+                clearInterval(reconnectInterval)
+                console.log("已建立websocket连接：无需重复建立")
+            }
+            return;
+        }
         const {cache: {userInfo: {id: userId}, token}, saveInLocalCache} = this.props;
         //连接websocket
         const websocket = new WebSocket(address);
@@ -207,9 +225,16 @@ class Tree3ChatRoom extends PureComponent {
             // websocket.onopen = this.handleWsOpen(websocket)
             websocket.addEventListener("open", (websocketOnOpen.bind(this))(websocket))
             websocket.addEventListener("message", dispatchMessage.bind(this))
+            // websocket.addEventListener("ping", startHeartBeat(websocket, userId))//心跳检测
             websocket.addEventListener("close", websocketOnClose.bind(this))
-            saveInLocalCache({websocket});
-            this.setTree3chatRoom({websocket, token, userId});
+            saveInLocalCache({
+                websocket, setDoDisconnect: (doDisconnect) => {
+                    return this.setState({doDisconnect: doDisconnect})
+                }
+            });
+            this.setTree3chatRoom({
+                websocket, token, userId
+            });
         } else {
             message.warn(settings.str_message.WebSocketFail);
         }
@@ -576,7 +601,12 @@ class ChatMain extends React.Component {
             //向服务器发送聊天消息，todo 后端存储并转发
             msg.id = null;//初次发送时前端使用的是临时id
             this.props.sendMessage(msg)
-
+            // fixme 心跳流量控制@Rupert：这里修改后的 lastSendMsgTime的最新值，
+            //  无法被心跳pingInterval中的elementThis.state.lastSendMsgTime
+            //  读取到
+            this.setState({lastSendMsgTime: dayjs()}, () => {
+                console.log("修改lastSendMsgTime：", this.state.lastSendMsgTime)
+            })
             this.textAreaRef.current.value = ''
         }
     }
