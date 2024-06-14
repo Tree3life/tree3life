@@ -71,8 +71,6 @@ public class AuthController {
                 return ResponseResultHelper.fail(CommunicationMessage.IncorrectPassword);
             }
 
-            //optimized-Logic：考虑、解决，同一用户的 多地登录问题 (Rupert，2024/5/26 11:16)
-
             //2.1.随机生成token，作为登录令牌
             String token_suffix = UUID.randomUUID().toString(true);
             String tokenKey = RedisConstance.TOKEN_KEY + token_suffix;

@@ -44,27 +44,36 @@ class Tree3Layout extends Component {
 
         if (this.props.cache.websocket && userId && userId !== clientId) {//确认信息有效
             const msg = beanFactory.createMessage(commandType.Logout, userId, serverId);
+            // 向服务器发送一条 logout 信息
             this.props.cache.websocket.send(JSON.stringify(msg));
             // message.success('已断开与聊天服务器的连接')
         }
         //声明是主动断开连接的
         this.props.cache.setDoDisconnect(true);
-        // todo@Rupert：向服务器发送一条 logout 信息 (2024/5/28 11:02)
-        // Modal.destroyAll();
-        this.closeChatRoom()
+        this.setState({
+            //关闭聊天室组件
+            chatRoomVisible: false,
+            //销毁聊天室组件
+            destroyChatRoom: true
+        });
     };
 
+    /**
+     * 仅关闭聊天室UI，并不销毁聊天室实例
+     * @param e
+     */
     closeChatRoom = e => {
         this.setState({
             chatRoomVisible: false,
+            //销毁聊天室组件
+            destroyChatRoom: false
         });
     };
-    handleChangeChatRoomVisible = () => {
+
+    openShowChatRoom = () => {
         this.setState(
             state => ({
                 chatRoomVisible: true,
-                //销毁聊天室组件
-                destroyChatRoom: true
             }));
     }
 
@@ -90,7 +99,6 @@ class Tree3Layout extends Component {
 
     //移除监听器，防止多个组件之间导致this的指向紊乱
     componentWillUnmount() {
-
         window.removeEventListener('resize', this.handleResize);
     }
 
@@ -113,11 +121,9 @@ class Tree3Layout extends Component {
             <>
                 <Layout id={"container"}>
                     {/*region 聊天室modal*/}
-                    {/*<Modal ref={currentNode=>{ this.chatRoomNode=currentNode;console.log("nnnnn",this.chatRoomNode);}}*/}
                     <Modal ref={this.chatRoomModalRef}
                            width={this.state.windowWidth * 0.7}
                            maskClosable={true}
-                           destroyOnClose={this.state.destroyChatRoom}//关闭时销毁内部组件
                            closable={false}
                            title={
                                <div style={{display: "flex", flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -132,9 +138,10 @@ class Tree3Layout extends Component {
 
                            }
                            visible={this.state.chatRoomVisible}
-                           footer={null}
+                           destroyOnClose={this.state.destroyChatRoom}//关闭时销毁内部组件
                            onCancel={this.closeChatRoom}
-                           showChatRoomVisible={this.handleChangeChatRoomVisible}
+                           showChatRoomVisible={this.openShowChatRoom}
+                           footer={null}
                     >
                         <div style={{
                             width: this.state.windowWidth * 0.676,
@@ -145,6 +152,7 @@ class Tree3Layout extends Component {
                             <Tree3ChatRoom/>
                         </div>
                     </Modal>
+                    {/*<Modal ref={currentNode=>{ this.chatRoomNode=currentNode;console.log("nnnnn",this.chatRoomNode);}}*/}
                     {/*endregion*/}
 
 

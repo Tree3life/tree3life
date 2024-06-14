@@ -40,9 +40,8 @@ public class Tree3ChatHandler extends SimpleChannelInboundHandler<TextWebSocketF
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Channel channel = ctx.channel();
-        //todo 如果 websocket在建立连接时能够 传递token，在此处进行 channel与session的绑定
         log.info("111111新客户端连接：{}，当前channel{}", channel.remoteAddress(), channel);
-        showUserBindChannel("handlerAdded");
+//        showUserBindChannel("handlerAdded");
         super.channelActive(ctx);
     }
 
@@ -57,7 +56,7 @@ public class Tree3ChatHandler extends SimpleChannelInboundHandler<TextWebSocketF
     @Override
     protected void channelRead0(ChannelHandlerContext context, TextWebSocketFrame frame) throws Exception {
         Channel channel = context.channel();
-        log.info("444444读事件----当前channel{}", channel);
+        log.debug("444444读事件----当前channel{}", channel);
         Assert.notNull(frame, "接收到的websocket消息为null");
         String wsMsg = frame.text();
         log.info("收到的原生消息为：{}", wsMsg);
@@ -74,7 +73,7 @@ public class Tree3ChatHandler extends SimpleChannelInboundHandler<TextWebSocketF
                 Command match = Command.match(cmdType);
                 AuthDispatcher authDispatcher = SpringUtil.getBean(AuthDispatcher.class);
                 authDispatcher.dispatch(match, context, frame);
-                showUserBindChannel("SessionCorrelation");
+//                showUserBindChannel("SessionCorrelation");
                 break;
 
             case PrivateChatCorrelation://私聊相关
@@ -103,11 +102,11 @@ public class Tree3ChatHandler extends SimpleChannelInboundHandler<TextWebSocketF
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         //从session中解除用户和channel的绑定
         Session session = SpringUtil.getBean(Session.class);
-        showUserBindChannel("555555handlerRemoved-》前");
+//        showUserBindChannel("555555handlerRemoved-》前");
         session.unbind(ctx.channel());
-        showUserBindChannel("handlerRemoved-》后");
-        // unsure：如果是异常断开，根据用户的channel获取其对应的id，是否向数据库保存一条 该用户已离线的消息(配合实现未读消息) (Rupert，2024/5/29 20:01)
+//        showUserBindChannel("handlerRemoved-》后");
         log.info("channelInactive客户端退出了,成功解除客户端:{}与channel:{}的绑定", ctx.channel().remoteAddress(), ctx.channel());
+        ctx.channel().close();
     }
 
 
@@ -118,13 +117,13 @@ public class Tree3ChatHandler extends SimpleChannelInboundHandler<TextWebSocketF
         //将异常信息返回给前端
         ctx.writeAndFlush(ResponseHelperWebSocket.fail(cause.getMessage()));
         // debug@Rupert：
-        cause.printStackTrace();
+//        cause.printStackTrace();
 
         //  发生异常时Channel是否应当被关闭
         //  （猜测：不应当被关闭，一个channel就是 `一个用户的某次连接`，即一个channel仅与一个用户有关，
-        // unsure：SpringUtil.getBean(Session.class).unbind(ctx.channel()); (Rupert，2024/5/28 8:05)
-        // unsure：出现异常后 应当【取消与客户端的连接】 context.close 还是 channel.close() (Rupert，2024/5/28 8:05)
-        ctx.channel().close();
+        // 出现异常后 是否应当【取消与客户端的连接】   (Rupert，2024/5/28 8:05)
+//        SpringUtil.getBean(Session.class).unbind(ctx.channel());
+//        ctx.channel().close();
 //        ctx.close();
 
     }
@@ -133,6 +132,6 @@ public class Tree3ChatHandler extends SimpleChannelInboundHandler<TextWebSocketF
     private void showUserBindChannel(String mark) {
         Session session = SpringUtil.getBean(Session.class);
         String s = session.showUserIdChannelMapInfo();
-        System.out.println(mark + "----》" + s);
+        log.debug(mark + "----》" + s);
     }
 }

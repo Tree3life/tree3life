@@ -30,7 +30,7 @@ class Login extends Component {
         debounce(async () => {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-            //todo check 用户名密码的合法性
+            // check 用户名密码的合法性
             if (!username || !password) {
                 message.warn("用户名/密码不能为空")
                 return;
@@ -54,7 +54,6 @@ class Login extends Component {
                 "tree3life_cache": "只能读,不能写xxxxxxx",
                 login: true,//用户的登录状态
                 token: userInfo.password,
-                // to be optimized@Rupert：将userInfo从cache中进行去除 (2024/5/28 18:34)
                 userInfo: {...cache.userInfo, ...userInfo},
                 // roles: resp.data.roles,//用户拥有的角色
                 // pages: resp.data.pages,//用户能够访问的页面

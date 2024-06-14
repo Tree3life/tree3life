@@ -20,7 +20,9 @@ import java.util.List;
 
 /**
  * 自定义拦截器对请求进行日志记录,todo 使用另外的线程对日志进行记录
- * todo #point后续拓展点: 和前端进行约定 完成对请求数据进行加密 todo 需要和前端约定好加密算法 对响应结果进行加密 相应的前端需要对请求结果进行解密
+ *
+ * todo #point后续拓展点: 和前端进行约定 完成对请求数据进行加密
+ * todo 需要和前端约定好加密算法 对响应结果进行加密 相应的前端需要对请求结果进行解密
  */
 @Component  //代表在工厂中创建对象   @configuration 配置     @Component  在工厂中创建对象   使用 logger -Token
 public class LoggerGatewayFilterFactory extends AbstractGatewayFilterFactory<LoggerGatewayFilterFactory.Config> {

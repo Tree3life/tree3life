@@ -41,8 +41,6 @@ export function user(preState = initState, action) {
  * @returns {{data, type: string}}
  */
 export const storageUserInfo = data => {
-    // debug@Rupert：对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/5/28 19:45)
-    console.log("storageUserInfostorageUserInfo：",data)
     return {type: ACTION.storageUserInfo, data}
 }
 

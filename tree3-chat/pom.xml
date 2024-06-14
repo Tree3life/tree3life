@@ -17,8 +17,7 @@
     </properties>
 
     <dependencies>
-        <!--todo 考虑引入common还是tree3-webcore-->
-        <!--todo 猜测 引入common ,固定网络地址，不走网关,同时网关中应当排除对`聊天映射标记（例如tree3Chat）`所作的映射操作
+        <!--
         地址规定：协议://ip:端口号/聊天映射标记
         例如：http://localhost:9999/tree3Chat-->
 <!--        <dependency>-->

@@ -31,10 +31,6 @@ import static com.tree3.utils.RedisUtils.Constant.*;
 @Slf4j
 @Component
 public class RedisUtils {
-    // todo：Redis在项目中的应用 (Rupert，2024/6/5 21:23)
-    static {
-
-    }
 
     /**
      * ！！！！:如果项目中配置了线程池 ，可以使用 项目中自带的线程池 appThreadPool

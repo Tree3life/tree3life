@@ -13,6 +13,5 @@ import java.util.concurrent.TimeUnit;
  */
 public interface RedisCache {
     // optimized：将所有 需要使用 redis 做查询缓存的方法 抽取到此处 (Rupert，2024/6/5 )
-    //
     public boolean cacheChatHistory(List<Object> history, Integer time, TimeUnit timeUnit);
 }

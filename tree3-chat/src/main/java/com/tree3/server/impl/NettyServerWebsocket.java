@@ -104,7 +104,7 @@ public class NettyServerWebsocket implements NettyServer {
                         pipeline.addLast("空闲检测", new IdleStateHandler(idleDetectionInterval, idleDetectionInterval, idleDetectionInterval, TimeUnit.SECONDS));
 //                        // ChannelDuplexHandler 可以同时作为入站和出站处理器
                         pipeline.addLast("处理检测到的空闲事件", new ChannelDuplexHandler() {
-                            // optimized：心跳检测逻辑(Rupert，2024/6/13 8:37)
+                            // 心跳检测逻辑(Rupert，2024/6/13 8:37)
                             //  1.客户端发送Ping，服务器接收到Ping之后，响应一个Pong,并记录 接收到的最新消息的的时间戳，保存到session中去
                             //  1.2 客户端每次发送消息之前进行检查，若 ((now-lastReceiveMsgTime)>心跳间隔的2.5倍？连接已断开：记录最新的心跳时间戳)则认为 服务器异常，报错/连接重试
                             //  2.当服务器触发读空闲之后，直接关闭连接;(连接的保活 应当交给客户端进行负责，减轻服务器压力)

@@ -76,14 +76,9 @@ public class AuthServiceImpl implements AuthService {
             //将异常信息返回给前端
             currentChannel.writeAndFlush(ResponseHelperWebSocket.fail(ILLEGAL_TOKEN));
 
-            // unsure：考虑context.close()还是channel.close() (Rupert，2024/5/28 7:57)
             //Step 1.2: 关闭与客户端的连接
-            //currentChannel.close();
 //            context.fireChannelInactive();
-            System.out.println(" currentChannel.close();111");
             currentChannel.close();
-            System.out.println(" currentChannel.close();222");
-//            context.close();
             return false;
         }
         String tokenKey = RedisConstance.TOKEN_KEY + tokenSuffix;
@@ -142,7 +137,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean logout(ChannelHandlerContext ctx, TextWebSocketFrame frame) {
         log.warn("处理退出 聊天服务器的请求。。。。{}", frame);
-        //todo 发送一条下线的消息记录，用于实现该用户的 群聊未读消息 的记录 考虑用Command.Offline或Command.Logout实现
+        //接收一条下线的消息记录，用于实现该用户的 群聊未读消息 的记录 考虑用Command.Offline或Command.Logout实现
         MessageText message = JSONUtils.paresToObj(frame.text(), MessageText.class);
         message.setState(Message.Status_Delivered);
 

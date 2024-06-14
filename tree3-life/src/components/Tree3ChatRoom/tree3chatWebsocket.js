@@ -33,7 +33,7 @@ export const clientId = -999;//在用户表中代表客户端对象的id
  */
 export const idleDetectionInterval = 300000;
 // export const heartbeatInterval = 120000;
-export const heartbeatInterval = 10000;
+export const heartbeatInterval = 120000;
 export const reconnectIntervalTimeout = 60000;
 export const chatInitInfo = {
     websocket: undefined,
@@ -179,15 +179,14 @@ export function dispatchMessage(event) {
     const {commandType: cmdType} = dataObj
     console.log('收到的socket后端响应数据：', dataObj)
     const {currentSession, friendList: frdList} = this.state
-
+    //接收到消息之后就记录最新的接收时间
+    this.setState({lastReceiveMsgTime: dayjs()})
     switch (cmdType) {
         case commandType.Pong:
-            // debug@Rupert：对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/6/13 21:49)
-            console.log("Pongggaaaaaa：",dataObj)
+            console.log("Pong：", dataObj)
             break;
         case commandType.ResponseLogin:
             // to be optimized@Rupert：优化此处的逻辑，优先使用本地缓存的数据 (2024/5/29 11:55)
-
             //处理 websocket认证后 服务器的响应数据
             const {data: {friends, groups}} = dataObj;
 
@@ -225,8 +224,6 @@ export function dispatchMessage(event) {
                     historyRefreshed: false
                 };
             });
-            console.log('=============================friendList', friendList);
-            console.log('=============================groupList', groupList);
 
             //处理文本数据
             this.setState((preState, preProps) => {
@@ -259,7 +256,6 @@ export function dispatchMessage(event) {
             break;
 
         case commandType.PrivateChatText:
-            console.log('收到的私聊信息', dataObj)
             const {from: freId} = dataObj ? dataObj : {};
             if (!dataObj.id) {//实时消息 是先转发 后 往数据库存储的，因此当前id应该是null
                 dataObj.id = nanoid(5);
@@ -274,7 +270,7 @@ export function dispatchMessage(event) {
                 }
             })
 
-            //todo 优化 考虑此处的优化！！！，这里 有点 小题大作 的 意味。【只需要更新 一个朋友的histor属性，但是却更新了所有的朋友及其属性】
+            // to be optimized@Rupert：优化 考虑此处的优化！！！，这里 有点 小题大作 的 意味。【只需要更新 一个朋友的histor属性，但是却更新了所有的朋友及其属性】
             this.setTree3chatRoom({friendList: newFriends})
             break;
         default:

@@ -66,11 +66,10 @@ public class PrivateChatServiceImpl implements PrivateChatService {
         Integer friendId = Integer.valueOf(Objects.requireNonNull(msg.getContent()));
         int userId = msg.getFrom();
 
-        // todo：前端直接将未读消息的id传过来,更新两者 用户的未读记录,取消未读消息 (Rupert，2024/5/30 10:00)
+        //前端直接将未读消息的id传过来,更新两者 用户的未读记录,取消未读消息 (Rupert，2024/5/30 10:00)
         Object payload = msg.getPayload();
         if (payload != null) {
             ArrayList<Integer> readMsg = (ArrayList<Integer>) payload;
-            System.out.println("readMsgreadMsgreadMsgreadMsgreadMsg" + readMsg);
             if (!ObjectUtils.isEmpty(readMsg)) {
                 boolean done = historyMapper.updateUnreadMessage(readMsg, Message.Status_Read);
                 log.debug("查询并更新消息的状态：user:{}-->friend:{},msgId:{}}", msg.getFrom(), msg.getContent(), readMsg);

@@ -172,8 +172,7 @@
              </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <!--    &lt;!&ndash;todo 每个微服务中都要引入部署插件，否则打包时会出现错误&ndash;&gt;-->
+    <!--    &lt;!&ndash;fixme： 每个微服务中都要引入部署插件，否则打包时会出现错误&ndash;&gt;-->
     <!--    <build>-->
     <!--        <plugins>-->
     <!--            <plugin>-->

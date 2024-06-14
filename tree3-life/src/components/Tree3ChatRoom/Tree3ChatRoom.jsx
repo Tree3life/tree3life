@@ -187,11 +187,12 @@ class Tree3ChatRoom extends PureComponent {
     }
 
     componentWillUnmount() {
-        // todo@Rupert：断开与服务器的连接 (2024/5/28 18:06)
-        // debug@Rupert：对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/6/13 17:19)
-        if (this.state.websocket) {
-            this.websocket.terminate()
-        }
+        // 断开与服务器的连接&清空定时任务
+        // if (this.state.websocket) {
+        //     this.websocket.terminate()
+        // }
+        // debug@Rupert：对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/6/14 8:05)
+        console.log("componentWillUnmount：")
         if (reconnectInterval) {
             clearInterval(reconnectInterval);
         }
@@ -201,6 +202,7 @@ class Tree3ChatRoom extends PureComponent {
     }
 
     componentDidMount() {
+        console.log("componentDidMount：")
         this.initWebsocket(settings.websocket_url);
     }
 
@@ -369,7 +371,6 @@ class ContactorList extends PureComponent {
                 return;
             }
             const matchedFriends = this.context.friendList.filter(item => {
-                // debug@Rupert：对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/6/1 10:10)
                 if (!item.title) {
                     return;
                 }
@@ -399,9 +400,6 @@ class ContactorList extends PureComponent {
      * @param isRefreshed 是否已经刷新过
      */
     showChatHistory = (current, menuType, isRefreshed) => {
-        // debug@Rupert：对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/5/30 10:42)
-        console.log("----------------->：", current.countUnread)
-        console.log('ContactorList showChatHistory this.context......', this.context, current)
         const {contactor} = this.context.currentSession
         const {id: contactorId} = contactor ? contactor : {id: clientId}
 
@@ -598,7 +596,7 @@ class ChatMain extends React.Component {
                 }
             }
 
-            //向服务器发送聊天消息，todo 后端存储并转发
+            //向服务器发送聊天消息，由后端生成ID 并存储
             msg.id = null;//初次发送时前端使用的是临时id
             this.props.sendMessage(msg)
             // fixme 心跳流量控制@Rupert：这里修改后的 lastSendMsgTime的最新值，
@@ -621,7 +619,7 @@ class ChatMain extends React.Component {
      */
     loadMoreHistory = (a, b, c) => {
         // debug@Rupert：JS对象(%O)、DOM对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/5/26 15:59)
-        console.log("%c已触发：", a, b, c)
+        console.log("%c加载更多的历史记录：", a, b, c)
         console.log(faker.person.fullName());
 
         //联系人的聊天记录
@@ -720,7 +718,6 @@ class ChatMain extends React.Component {
                                 // username: "aaa"
                                 return (
                                     <List.Item key={item.id}>
-                                        {/*todo 将判断条件修改为：自己发送的消息*/}
                                         <div
                                             className={item.from === userInfo.id ? "userListItem" : 'contactorObjListItem'}>
                                             <Comment

@@ -30,7 +30,6 @@ public class SessionImpl implements Session {
     public boolean bind(Channel channel, Integer userId) {
         log.trace("要绑定的用户id:{},channel:{}", userId, channel);
         try {
-            // unsure：同一个账号在两地登录，重复绑定问题 (Rupert，2024/5/26 11:06)
             userIdChannelMap.put(userId, channel);
             channelUserIdMap.put(channel, userId);
             channelAttributesMap.put(channel, new ConcurrentHashMap<>());
