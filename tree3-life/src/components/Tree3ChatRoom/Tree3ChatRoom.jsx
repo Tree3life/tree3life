@@ -1,4 +1,5 @@
 import './index.css'
+import 'emoji-mart/css/emoji-mart.css'
 import React, {PureComponent} from 'react';
 import settings from "@/resources/application";
 import beanFactory from "@/resources/factory";
@@ -34,6 +35,7 @@ import {
 } from "@/components/Tree3ChatRoom/tree3chatWebsocket";
 import {saveInLocalCache} from "@/store/states/cache";
 import Search from "antd/es/input/Search";
+import {Picker} from "emoji-mart";
 // import {saveInLocalCache} from "@/store/states/cache";
 
 const {TabPane} = Tabs;
@@ -545,6 +547,9 @@ class ChatMain extends React.Component {
             chatHistory: this.context.currentSession.contactor ? this.context.currentSession.contactor.history : [],
             loading: false,
             hasMore: true,
+            contentText: '',//聊天内容
+
+            emojiMartVisible: false,//表情包选择框
         };
     }
 
@@ -603,7 +608,7 @@ class ChatMain extends React.Component {
             // fixme 心跳流量控制@Rupert：这里修改后的 lastSendMsgTime的最新值，
             //  无法被心跳pingInterval中的elementThis.state.lastSendMsgTime
             //  读取到
-            this.setState({lastSendMsgTime: dayjs()}, () => {
+            this.setState({lastSendMsgTime: dayjs(), contentText: ""}, () => {
                 console.log("修改lastSendMsgTime：", this.state.lastSendMsgTime)
             })
             this.textAreaRef.current.value = ''
@@ -639,6 +644,20 @@ class ChatMain extends React.Component {
                 currentSession: {contactor: {...contactor}}
             });
         }, 500);
+    }
+    addEmoji = (e) => {
+        console.log("选择表情包：", e)
+        let sym = e.unified.split('-')
+        let codesArray = []
+        sym.forEach(el => codesArray.push('0x' + el))
+        let emoji = String.fromCodePoint(...codesArray)
+        this.setState({
+            contentText: this.state.contentText + emoji,
+            emojiMartVisible: false
+        })
+    }
+    handleTextChange = e => {
+        this.setState({contentText: e.target.value})
     }
 
     render() {
@@ -744,8 +763,57 @@ class ChatMain extends React.Component {
                     {/*</div>*/}
                 </div>
 
-                <div id="funcWindow">表情、文件</div>
-                <textarea rows={6} placeholder={"输入..."} ref={this.textAreaRef} id="inputWindow">
+                <div id="funcWindow">
+                    <Button
+                        size={"small"} shape="circle"
+                        ghost={true}
+                        style={{marginLeft: "5px"}}
+                        onClick={() => {
+                            this.setState({emojiMartVisible: !this.state.emojiMartVisible})
+                        }}>
+                        <Icon size={"large"} type="smile" theme="twoTone"/>
+                    </Button>
+                    <div
+                        onMouseLeave={() => {
+                            this.setState({emojiMartVisible: false})
+                        }}
+                        style={{display: this.state.emojiMartVisible ? "" : "none"}}>
+                        <Picker
+
+                            autoFocus={true}
+                            title='选择表情包' emoji='point_up'
+                            style={{
+                                position: 'absolute',
+                                top: '-130px', right: '20%'
+                            }}
+                            set='twitter'
+                            i18n={{
+                                search: '搜索',
+                                categories: {
+                                    search: '搜索结果',
+                                    recent: '最近',
+                                    smileys: '笑脸',
+                                    people: '人类',
+                                    nature: '生物',
+                                    foods: '饮食',
+                                    activity: '动作',
+                                    places: '地域',
+                                    objects: '对象',
+                                    symbols: '符号',
+                                    flags: '旗帜',
+                                    custom: '其它',
+                                }
+                            }}
+                            onSelect={this.addEmoji}
+                        />
+                    </div>
+                    <div style={{marginRight: "5px"}}>
+                        文件
+                    </div>
+
+                </div>
+                <textarea rows={6} onChange={this.handleTextChange} value={this.state.contentText} placeholder={"输入..."}
+                          ref={this.textAreaRef} id="inputWindow">
 
                </textarea>
                 {/*<input placeholder={"输入框aaaaaaaaaa"} type={"text"}/>*/}

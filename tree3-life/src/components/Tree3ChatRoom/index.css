@@ -135,8 +135,14 @@
   height: 6%;
   background-color: #b1dae7;
   width: 100%;
-  opacity: 0.5;
   z-index: 2;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+#tree3ChatRoom #mainArea #bodyWindow #funcWindow .emoji-mart-preview {
+  display: none;
 }
 #tree3ChatRoom #mainArea #bodyWindow #inputWindow {
   flex: 27.321;

@@ -128,15 +128,17 @@
         //// border: '1px solid rgba(140, 140, 140, 0.35)',
         //padding:'10%  5%  20%',
         //height: '72.67%',
-        .infinite-scroll-component{
-          .loadingSpan{
+        .infinite-scroll-component {
+          .loadingSpan {
             padding-top: 5%;
             margin: auto;
           }
         }
+
         .ant-spin-container {
           padding-bottom: 2.5%;
         }
+
         .ant-list-item {
           padding: 1%;
           //justify-content: stretch;
@@ -176,6 +178,7 @@
 
           .contactorObjListItem {
             width: 100%;
+
             .ant-comment-inner {
               .tree3-common-ant-comment-inner();
               width: 100%;
@@ -197,8 +200,18 @@
         height: 6%;
         background-color: #b1dae7;
         width: 100%;
-        opacity: 0.5;
+        //opacity: 0.85;
         z-index: 2;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
+        //align-content: space-between;
+        //align-items: stretch;
+
+        .emoji-mart-preview {
+          display: none;
+        }
       }
 
       #inputWindow {
