@@ -141,7 +141,7 @@ public class AuthServiceImpl implements AuthService {
         MessageText message = JSONUtils.paresToObj(frame.text(), MessageText.class);
         message.setState(Message.Status_Delivered);
 
-        //Step 1: 将消息 转换为 chathistory 并存储
+        //Step 1: 将消息 转换为 chathistory 并存储(操作在 {@link com.tree3.handler.channel.Tree3ChatHandler }channelInactive()或exceptionCaught进行)
         ChatHistory chatHistory = PojoConvertor.convertTOChatHistory(message);
         historyMapper.insert(chatHistory);
 
@@ -152,7 +152,6 @@ public class AuthServiceImpl implements AuthService {
         session.unbind(ctx.channel());
         //断开连接
         ctx.channel().close();
-        log.error("{}", message);
         return false;
     }
 

@@ -1,4 +1,5 @@
 package com.tree3.session;
+
 import io.netty.channel.Channel;
 
 /**
@@ -15,41 +16,54 @@ public interface Session {
  */
     /**
      * 绑定会话
+     *
      * @param channel 哪个 channel 要绑定会话
-     * @param token 会话绑定用户
+     * @param token   会话绑定用户
      */
     boolean bind(Channel channel, Integer userId);
 
     /**
      * 解绑会话
+     *
      * @param channel 哪个 channel 要解绑会话
      */
     void unbind(Channel channel);
 
     /**
      * 获取属性
+     *
      * @param channel 哪个 channel
-     * @param name 属性名
+     * @param name    属性名
      * @return 属性值
      */
     Object getAttribute(Channel channel, String name);
 
     /**
      * 设置属性
+     *
      * @param channel 哪个 channel
-     * @param name 属性名
-     * @param value 属性值
+     * @param name    属性名
+     * @param value   属性值
      */
     void setAttribute(Channel channel, String name, Object value);
 
     /**
      * 根据用户token获取 channel
+     *
      * @param token 用户token
      * @return channel
      */
     Channel getChannel(Integer userId);
 
-     String showUserIdChannelMapInfo();
+    /**
+     * 返回channel绑定的用户id
+     *
+     * @param channel
+     * @return
+     */
+    Integer getUserId(Channel channel);
+
+    String showUserIdChannelMapInfo();
     /**
      * 根据用户ID获取 channel
      * @param userId 用户ID

@@ -60,6 +60,10 @@ public class SessionImpl implements Session {
         return userIdChannelMap.get(userId);
     }
 
+    @Override
+    public Integer getUserId(Channel channel) {
+        return channelUserIdMap.get(channel);
+    }
 
     @Override
     public Object getAttribute(Channel channel, String name) {

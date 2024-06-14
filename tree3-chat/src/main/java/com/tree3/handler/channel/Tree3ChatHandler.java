@@ -1,5 +1,7 @@
 package com.tree3.handler.channel;
 
+import com.tree3.dao.ChatHistoryMapper;
+import com.tree3.pojo.entity.ChatHistory;
 import com.tree3.service.chat.GroupChatDispatcher;
 import com.tree3.service.chat.PrivateChatDispatcher;
 import com.tree3.utils.ResponseHelperWebSocket;
@@ -17,6 +19,8 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
+import java.util.Date;
 
 /**
  * <p>
@@ -103,9 +107,25 @@ public class Tree3ChatHandler extends SimpleChannelInboundHandler<TextWebSocketF
         //从session中解除用户和channel的绑定
         Session session = SpringUtil.getBean(Session.class);
 //        showUserBindChannel("555555handlerRemoved-》前");
+        Integer userId = session.getUserId(ctx.channel());
+        // fixme：解绑前从session中获取用户的id，并插入一条对应的离线消息 前端无需再主动发送离线消息
+        if (userId != null) {
+            ChatHistoryMapper historyMapper = SpringUtil.getBean(ChatHistoryMapper.class);
+            ChatHistory chatHistory = new ChatHistory();
+            chatHistory.setCommand(Command.Logout.getType());
+            chatHistory.setFrom(userId);
+            chatHistory.setDeleted(false);
+            chatHistory.setState(0);
+            chatHistory.setCreateTime(new Date());
+            //-1代表接收者是服务器
+            chatHistory.setTo(-1);
+            historyMapper.insert(chatHistory);
+            log.info("添加一条用户：{} 的离线消息", userId);
+        }
         session.unbind(ctx.channel());
 //        showUserBindChannel("handlerRemoved-》后");
         log.info("channelInactive客户端退出了,成功解除客户端:{}与channel:{}的绑定", ctx.channel().remoteAddress(), ctx.channel());
+
         ctx.channel().close();
     }
 
