@@ -392,7 +392,7 @@ export function startHeartBeat(ws, userId, elementThis) {
         //周期性发送心跳包
         pingInterval = setInterval(() => {
             const now = dayjs()
-            if (ws.readyState == WebSocket.CLOSING || ws.readyState == WebSocket.CLOSED) {
+            if (ws.readyState === WebSocket.CLOSING || ws.readyState === WebSocket.CLOSED) {
                 console.log("聊天服务器已断开....)");
                 clearInterval(pingInterval);
                 return;

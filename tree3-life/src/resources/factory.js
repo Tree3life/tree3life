@@ -1,5 +1,4 @@
 import settings from '@/resources/application'
-import {nanoid} from "nanoid";
 import {commandType} from "@/resources/constant/tree3chat";
 
 /**

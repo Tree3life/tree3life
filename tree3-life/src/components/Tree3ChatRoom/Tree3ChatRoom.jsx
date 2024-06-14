@@ -3,15 +3,14 @@ import React, {PureComponent} from 'react';
 import settings from "@/resources/application";
 import beanFactory from "@/resources/factory";
 import {commandType} from "@/resources/constant/tree3chat";
-import {fa, fakerZH_CN as faker} from '@faker-js/faker';
-import {auth, user as userApi} from "@/services";
+import {fakerZH_CN as faker} from '@faker-js/faker';
+import {user as userApi} from "@/services";
 import {
     Avatar,
     Badge,
     Button,
     Card,
     Comment,
-    Divider,
     Icon,
     List,
     message, Popover,
@@ -31,7 +30,7 @@ import {
     websocketOnOpen,
     websocketOnClose,
     sendMessage,
-    defaultAvatar, clientId, startHeartBeat, reconnectInterval, pingInterval,
+    defaultAvatar, clientId, reconnectInterval, pingInterval,
 } from "@/components/Tree3ChatRoom/tree3chatWebsocket";
 import {saveInLocalCache} from "@/store/states/cache";
 import Search from "antd/es/input/Search";
@@ -76,6 +75,8 @@ class FindUser extends React.Component {
     };
     searchFriends = async () => {
         let resp = await userApi.searchUsers({username: "张胜男"});
+        // debug@Rupert：对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/6/14 9:24)
+        console.log("findUser resp：", resp)
     }
     fetchMoreMatchedUsersData = () => {
         if (this.state.matchedUsers.length >= 500) {
@@ -372,7 +373,7 @@ class ContactorList extends PureComponent {
             }
             const matchedFriends = this.context.friendList.filter(item => {
                 if (!item.title) {
-                    return;
+                    return false;
                 }
                 if (item.title.startsWith(name) || item.username.startsWith(name)) {
                     return true;

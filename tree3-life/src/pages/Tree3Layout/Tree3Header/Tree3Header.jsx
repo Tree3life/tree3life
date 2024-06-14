@@ -4,9 +4,8 @@ import {withRouter} from 'react-router-dom'
 
 import {Menu, Icon, Row, Col, Button, Avatar} from 'antd';
 import {Input} from 'antd';
-import settings from "@/resources/application";
 
-const {SubMenu} = Menu;
+// const {SubMenu} = Menu;
 const {Search} = Input;
 
 @withRouter
