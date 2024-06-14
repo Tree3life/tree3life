@@ -32,8 +32,8 @@ export const clientId = -999;//在用户表中代表客户端对象的id
  * reconnectIntervalTimeout自动重连的间隔设置为：1分钟（60000毫秒 ）
  */
 export const idleDetectionInterval = 300000;
+export const heartbeatInterval = 12000;
 // export const heartbeatInterval = 120000;
-export const heartbeatInterval = 120000;
 export const reconnectIntervalTimeout = 60000;
 export const chatInitInfo = {
     websocket: undefined,
@@ -177,10 +177,11 @@ export function dispatchMessage(event) {
     let dataObj = JSON.parse(msgFrame);
     // commandType==200
     const {commandType: cmdType} = dataObj
-    console.log('收到的socket后端响应数据：', dataObj)
     const {currentSession, friendList: frdList} = this.state
     //接收到消息之后就记录最新的接收时间
+    console.log('收到的socket后端响应数据：', dataObj)
     this.setState({lastReceiveMsgTime: dayjs()})
+
     switch (cmdType) {
         case commandType.Pong:
             console.log("Pong：", dataObj)
@@ -273,7 +274,21 @@ export function dispatchMessage(event) {
             // to be optimized@Rupert：优化 考虑此处的优化！！！，这里 有点 小题大作 的 意味。【只需要更新 一个朋友的histor属性，但是却更新了所有的朋友及其属性】
             this.setTree3chatRoom({friendList: newFriends})
             break;
+        case commandType.ExceptionRemoteLogin://异地登录时，清空当前连接
+            //声明是主动断开连接的
+            this.props.cache.setDoDisconnect(true);
+            this.setState({
+                doDisconnect: true,
+                websocket: null
+            })
+            this.props.forceCloseRoom()
+
+            message.warn(dataObj.data);
+            //跳转登录页 重定向应该是最好的
+            this.props.history.replace("/login")
+            break;
         default:
+            console.log("接收到不明消息：：", dataObj)
             break;
     }
 }
@@ -315,7 +330,11 @@ export function websocketOnOpen(websocket) {
         const now = dayjs();
         this.setState({lastReceiveMsgTime: now, lastSendMsgTime: now}, () => {
             //开启心跳检测
-            startHeartBeat(websocket, userId, this)();
+            startHeartBeat(websocket, userId, this, () => {
+                // debug@Rupert：对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/6/14 15:10)
+                console.log("心跳检测中获取最新状态：", this.state.lastSendMsgTime)
+                return this.state.lastSendMsgTime
+            })();
         })
     }
 }
@@ -386,7 +405,7 @@ export function sendMessage(messageObj) {
  * @param websocket
  * @returns {(function(*): void)|*}
  */
-export function startHeartBeat(ws, userId, elementThis) {
+export function startHeartBeat(ws, userId, elementThis, getLastSendMsgTime) {
     return () => {
         clearInterval(pingInterval);
         //周期性发送心跳包
@@ -400,15 +419,19 @@ export function startHeartBeat(ws, userId, elementThis) {
 
             // 减小流量/不必要的ping ，检查最近的一条消息的发送时间，如果间隔较小，就不发送心跳包
             // fixme 心跳流量控制@Rupert：检查最近的一条消息的发送时间，如果间隔较小，就不发送心跳包 (2024/6/13 18:52)
-            let nextSendMsgTime = dayjs(elementThis.state.lastSendMsgTime).add(heartbeatInterval / 3, 'millisecond')
+            let nextSendMsgTime = dayjs(getLastSendMsgTime()).add(heartbeatInterval / 3, 'millisecond')
+            // debug@Rupert：对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/6/14 15:12)
+            console.log("getLastSendMsgTime()getLastSendMsgTime()：", getLastSendMsgTime())
             let timeFlag = dayjs(now).isBefore(nextSendMsgTime);
             if (timeFlag) {
-                console.log("未发送的pinggggg：{}", elementThis.state.lastSendMsgTime, now, nextSendMsgTime)
+                console.log("未发送的pinggggg：{}", getLastSendMsgTime(), now, nextSendMsgTime)
                 return;
             }
             let ping = beanFactory.createPingMessage(userId);
             // console.log("发送的pinggggg：{}", elementThis.state.lastSendMsgTime, now, nextSendMsgTime)
             ws.send(JSON.stringify(ping))
+            // debug@Rupert：对象(%o)、字符(%s)、数字:(%i、%d、%f)、样式:(%c) (2024/6/14 15:02)
+            console.log("pingllll：", now)
             elementThis.setState({lastSendMsgTime: now});
         }, heartbeatInterval);
     }

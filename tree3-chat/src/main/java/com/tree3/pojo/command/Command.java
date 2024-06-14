@@ -131,6 +131,7 @@ public enum Command {
      * 不需要区分处理的一般异常
      */
     ExceptionCorrelation(300),
+    ExceptionRemoteLogin(301),
     //endregion 异常相关
 
     //未知的命令

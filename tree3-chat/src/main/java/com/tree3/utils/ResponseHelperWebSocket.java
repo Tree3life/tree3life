@@ -33,6 +33,18 @@ public class ResponseHelperWebSocket {
         );
     }
 
+    public static TextWebSocketFrame fail(String message,Command exceptionType) {
+        MessageResponse messageText = new MessageResponse();
+        messageText.setCommandType(exceptionType.getType());
+        messageText.setTo(-1);//-1 代表系统
+        messageText.setCreateTime(new Date());
+        messageText.setData(message);
+
+        return new TextWebSocketFrame(
+                JSONUtils.toJsonStr(messageText)
+        );
+    }
+
     /**
      * 发送一条成功的系统消息
      *

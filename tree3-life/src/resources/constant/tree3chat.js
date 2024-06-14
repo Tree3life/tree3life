@@ -62,6 +62,7 @@ export const commandType = {
 
 //region 异常相关
     ExceptionCorrelation: 300,//不需要区分处理的一般异常
+    ExceptionRemoteLogin: 301,//异地登录
 
 //endregion 异常相关
     //未知的命令

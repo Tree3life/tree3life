@@ -32,6 +32,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -90,6 +91,21 @@ public class AuthServiceImpl implements AuthService {
         }
 
         Integer userId = user.getId();
+
+        //已经在别处登录过
+        Channel lastChannel = session.getChannel(userId);
+        if (lastChannel != null) {
+            //挤掉上一个人的登录状态，通知上一个客户端主动断开连接
+            lastChannel.writeAndFlush(ResponseHelperWebSocket.fail("异地登录，强制退出！", Command.ExceptionRemoteLogin));
+            log.warn("用户：{}，channel：{},异地登录", userId, lastChannel);
+
+            //添加一条离线消息
+            //-1代表接收者是服务器
+            ChatHistory forceOut = new ChatHistory(Command.Logout.getType(), 0, userId, -1, new Date(), false);
+            historyMapper.insert(forceOut);
+            session.unbind(lastChannel);
+            lastChannel.close();
+        }
 
         //Step 2: 将channel与用户id进行绑定
         boolean bind = session.bind(currentChannel, userId);

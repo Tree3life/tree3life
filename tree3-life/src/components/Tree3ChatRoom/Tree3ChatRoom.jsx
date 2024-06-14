@@ -646,7 +646,6 @@ class ChatMain extends React.Component {
         }, 500);
     }
     addEmoji = (e) => {
-        console.log("选择表情包：", e)
         let sym = e.unified.split('-')
         let codesArray = []
         sym.forEach(el => codesArray.push('0x' + el))

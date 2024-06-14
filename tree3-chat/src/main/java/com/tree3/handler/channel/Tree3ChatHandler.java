@@ -108,17 +108,10 @@ public class Tree3ChatHandler extends SimpleChannelInboundHandler<TextWebSocketF
         Session session = SpringUtil.getBean(Session.class);
 //        showUserBindChannel("555555handlerRemoved-》前");
         Integer userId = session.getUserId(ctx.channel());
-        // fixme：解绑前从session中获取用户的id，并插入一条对应的离线消息 前端无需再主动发送离线消息
+        // 解绑前从session中获取用户的id，并插入一条对应的离线消息 前端无需再主动发送离线消息
         if (userId != null) {
             ChatHistoryMapper historyMapper = SpringUtil.getBean(ChatHistoryMapper.class);
-            ChatHistory chatHistory = new ChatHistory();
-            chatHistory.setCommand(Command.Logout.getType());
-            chatHistory.setFrom(userId);
-            chatHistory.setDeleted(false);
-            chatHistory.setState(0);
-            chatHistory.setCreateTime(new Date());
-            //-1代表接收者是服务器
-            chatHistory.setTo(-1);
+            ChatHistory chatHistory = new ChatHistory(Command.Logout.getType(), 0, userId, -1, new Date(), false);            //-1代表接收者是服务器
             historyMapper.insert(chatHistory);
             log.info("添加一条用户：{} 的离线消息", userId);
         }

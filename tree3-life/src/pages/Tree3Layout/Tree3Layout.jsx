@@ -60,9 +60,8 @@ class Tree3Layout extends Component {
 
     /**
      * 仅关闭聊天室UI，并不销毁聊天室实例
-     * @param e
      */
-    closeChatRoom = e => {
+    closeChatRoom = () => {
         this.setState({
             chatRoomVisible: false,
             //销毁聊天室组件
@@ -149,7 +148,16 @@ class Tree3Layout extends Component {
                             // backgroundColor: "red",
                         }}>
                             {/*<Tree3Chat/>*/}
-                            <Tree3ChatRoom/>
+                            {/*用于异地登录时强制退出*/}
+                            <Tree3ChatRoom forceCloseRoom={() => {
+
+                                this.setState({
+                                    //关闭聊天室组件
+                                    chatRoomVisible: false,
+                                    //销毁聊天室组件
+                                    destroyChatRoom: true
+                                })
+                            }}/>
                         </div>
                     </Modal>
                     {/*<Modal ref={currentNode=>{ this.chatRoomNode=currentNode;console.log("nnnnn",this.chatRoomNode);}}*/}
@@ -161,7 +169,6 @@ class Tree3Layout extends Component {
                         <Tree3Header parentStyle={headerStyle} chatRoomNode={this.chatRoomModalRef}/>
                     </Header>
                     <Layout>
-
 
                         <Sider id={"container-sider-left"} theme={"light"} width={windowWidth * 0.24}>
                             {/*中间-左侧*/}

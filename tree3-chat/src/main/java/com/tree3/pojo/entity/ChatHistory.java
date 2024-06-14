@@ -94,5 +94,13 @@ public class ChatHistory implements Serializable {
     private Boolean deleted;
 
 
+    public ChatHistory(Integer command, Integer state, Integer from, Integer to,Date createTime, Boolean deleted) {
+        this.command = command;
+        this.state = state;
+        this.from = from;
+        this.to = to;
+        this.createTime = createTime;
+        this.deleted = deleted;
+    }
 }
 
