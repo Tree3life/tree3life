@@ -54,7 +54,7 @@ class Tree3Header extends Component {
                       mode="horizontal">
 
                     <Menu.Item disabled={true} key="tree3-head-logo">
-                        <Avatar src={"http://md.tree3.life/favor/favicon.svg"}  size="large" icon="user" />
+                        <Avatar src={"http://md.tree3.life/favor/favicon.svg"} size="large" icon="user"/>
                     </Menu.Item>
 
                     <Menu.Item key="mail">
@@ -86,10 +86,13 @@ class Tree3Header extends Component {
                     {/*    </Menu.ItemGroup>*/}
                     {/*</SubMenu>*/}
 
-                    <Menu.Item key="alipay">
-                        <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
-                            聚合支付
-                        </a>
+                    <Menu.Item key="alipay" onClick={() => {
+                        this.props.history.push('/home/pay')
+                    }}>
+                        聚合支付
+                        {/*<a target="_blank" rel="noopener noreferrer">*/}
+                        {/*    聚合支付*/}
+                        {/*</a>*/}
                     </Menu.Item>
                 </Menu>
                 {/*endregion 导航栏*/}

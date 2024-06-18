@@ -69,6 +69,12 @@ const routes = [
                 component: lazy(() => import('../components/Loading/Loading')),
                 meta: {title: 'testLoading'},
             },
+            {
+                path: '/home/pay',
+                name: '聚合支付',
+                component: lazy(() => import('../components/LeftMenuDemo')),
+                meta: {title: 'testPay'},
+            },
         ]
     },
     //else
