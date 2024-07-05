@@ -25,7 +25,19 @@
   
 
 - 前端
-  - React、Redux、Router、AntDesign UI
+  - React、Redux、Router、AntDesign UI、表情包、右键菜单
+  
+  - 前端整合/实现的通用模块
+  
+    - 封装axios，请求/响应拦截
+  
+    - 统一异常处理
+  
+    - 路由封装
+  
+    - 统一常量/配置信息管理
+  
+      
   
   
   
@@ -34,6 +46,12 @@
   - MySQL 、Redis、Elasticsearch
   - RabbitMQ
   - Netty(v4)
+  - 后端整合/实现的通用模块
+    - 线程池
+    - Redis工具类/Spring工具类
+    - 基于redis的分布式session
+    - 响应结果封装、统一异常处理
+    - mq的消息可靠性保证示例(三次自动重试)
 
 ## 项目模块
 
